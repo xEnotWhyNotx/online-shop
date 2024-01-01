@@ -23,5 +23,5 @@
    python your_bot_filename.py
    ```
 Структура проекта
-- **your_bot_filename.py**: Основной файл с кодом бота.
+- **bot.py**: Основной файл с кодом бота.
 - **requirements.txt**: Файл с зависимостями проекта.

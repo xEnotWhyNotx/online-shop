@@ -29,3 +29,10 @@
 - **text.py**: Файл с текстовыми ответами на каждое сообщение.
 - **main.py**: В дальнейшем будет переименован в test.py.
 - **requirements.txt**: Файл с зависимостями проекта.
+
+## Визуальное описание машины состояний
+![image](https://github.com/xEnotWhyNotx/online-shop/assets/96652001/46f27a00-cb4c-49f2-a621-754d563346ec)
+
+
+## Визуальное представление взаимодействия с ботом
+![image](https://github.com/xEnotWhyNotx/online-shop/assets/96652001/5a98debd-053d-425c-a315-92cdaabf11dc)

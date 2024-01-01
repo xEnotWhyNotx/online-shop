@@ -20,7 +20,7 @@
 3. Запустите бота:
 
    ```bash
-   python your_bot_filename.py
+   python bot.py
    ```
 Структура проекта
 - **bot.py**: Основной файл с кодом бота.

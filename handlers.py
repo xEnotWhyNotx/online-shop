@@ -15,3 +15,5 @@ async def start_handler(msg: Message):
 @router.message(F.text == "◀️ Выйти в меню")
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu)
+    
+#Nasrano

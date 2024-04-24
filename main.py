@@ -19,8 +19,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 
 
-import logging
-import asyncio
+# import logging
+# import asyncio
 # from aiogram import Bot, Dispatcher
 # from handlers import questions, different_types
 # from aiogram.fsm.state import StatesGroup, State

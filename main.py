@@ -18,7 +18,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
 
-
+# BIM-BIM BAM-BAM
 # import logging
 # import asyncio
 # from aiogram import Bot, Dispatcher

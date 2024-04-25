@@ -1,47 +1,50 @@
-import sqlite3
-backupversion = 0
-class BotDB:
-    
-    def __init__(self, db_file):
-        #Инициализация соединения с бд
-        self.conn = sqlite3.connect(db_file)
-        self.cursor = self.conn.cursor()
-        
+from pathlib import Path
 
-    # def users_list(self):
-    #     #Получение списка пользователей из БД
-    #     csv_file = 'users.csv'
-    #     # try :
-    #     users_list = self.cursor.execute("SELECT * from users")
-    #     rows = users_list.fetchall()
-    #     print("Данные были получены, вот они", rows)
-    
-    #     try:
-    #         users_list = self.cursor.execute("SELECT * from users")
-    #         rows = users_list.fetchall()
-        
-    #         with open(csv_file, mode='w', newline='') as file:
-    #             writer = csv.writer(file)
-    #             writer.writerow([description[0] for description in self.cursor.description])
-    #             writer.writerows(rows)
-    #         backupversion+=1     
-    #         return csv_file
-        
-    #     except Exception as e:
-    #         print(f"Произошла ошибка при создании CSV файла: {e}")
-    #         return None
-    def users_list(self):
-        # Получение списка пользователей из БД
-        users_list = self.cursor.execute("SELECT * from users")
-        rows = users_list.fetchall()
+from sqlalchemy import event, Engine, inspect, text
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from config import DB_NAME
+from models.base import Base
 
-        user_list = []
-        column_names = [description[0] for description in self.cursor.description]
-        user_list.append(column_names)
+"""
+Imports of these models are needed to correctly create tables in the database.
+For more information see https://stackoverflow.com/questions/7478403/sqlalchemy-classes-across-files
+"""
+from models.item import Item
+from models.user import User
+from models.buy import Buy
+from models.buyItem import BuyItem
+from models.category import Category
+from models.subcategory import Subcategory
 
-        for row in rows:
-            user_list.append(row)
-        print(user_list)
-        return user_list
-        
+url = f"sqlite+aiosqlite:///data/{DB_NAME}"
+data_folder = Path("data")
+if data_folder.exists() is False:
+    data_folder.mkdir()
+engine = create_async_engine(url, echo=True)
+async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
 
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
+
+async def check_all_tables_exist(db_engine):
+    async with db_engine.begin() as conn:
+        for table in Base.metadata.tables.values():
+            result = await conn.execute(
+                text(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table.name}'"))
+            if result.scalar() is None:
+                return False
+    return True
+
+
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        if await check_all_tables_exist(engine):
+            pass
+        else:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)

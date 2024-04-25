@@ -1,6 +1,5 @@
-env/
-*.pyc
-__pycache__/
-*.log
-*.db
-*.sqlite3
+# Ignore virtual environment
+venv/
+
+# Ignore Docker Compose file
+docker-compose.yml

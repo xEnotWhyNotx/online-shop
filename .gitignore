@@ -1,5 +1,6 @@
 # Ignore virtual environment
 venv/
+.github/
 
 # Ignore Docker Compose file
 docker-compose.yml

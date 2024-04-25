@@ -288,10 +288,3 @@ A new purchase by user @durov for the amount of $500.0 for the purchase of a 1 p
 
 ## ✨ DONATE Buy Me Coffee
 
-* BTC - bc1q2kv89q8yvf068xxw3x65gzfag98l9wnrda3x56
-* LTC - ltc1q0tuvm5vqn9le5zmhvhtp7z9p2eu6yvv24ey686
-* TRX - THzRw8UpTsEYBEG5CCbsCVnJzopSHFHJm6
-* ETH - 0xB49D720DE2630fA4C813d5B4c025706E25cF74fe
-* USDT ERC20 - 0xB49D720DE2630fA4C813d5B4c025706E25cF74fe
-* USDT BEP20 - 0xB49D720DE2630fA4C813d5B4c025706E25cF74fe
-* USDT TRC20 - THzRw8UpTsEYBEG5CCbsCVnJzopSHFHJm6

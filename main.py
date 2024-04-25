@@ -7,11 +7,12 @@ from handlers import router
 
 
 async def main():
-    bot = Bot(token="BOT_TOKEN")
+    bot = Bot(token="5792325635:AAE6F_i7HCcQJWxKhEXhcsIktLJnTYiJtv8")
     dp = Dispatcher()
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    
 
 
 if __name__ == "__main__":

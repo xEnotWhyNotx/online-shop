@@ -1,5 +1,5 @@
 import sqlite3
-backupversion = 0
+import csv
 class BotDB:
     
     def __init__(self, db_file):
@@ -8,40 +8,43 @@ class BotDB:
         self.cursor = self.conn.cursor()
         
 
-    # def users_list(self):
-    #     #Получение списка пользователей из БД
-    #     csv_file = 'users.csv'
-    #     # try :
-    #     users_list = self.cursor.execute("SELECT * from users")
-    #     rows = users_list.fetchall()
-    #     print("Данные были получены, вот они", rows)
+    def create_user(self, user_id):
+        checking_user = self.cursor.execute("select * from users where telegram_id = ?", user_id).fetchone()
+        if not checking_user:
+            self.cursor.execute("INSERT INTO users (telegram_id) values (?)", user_id)
+            self.conn.commit()
+            return 1
+        else:
+            pass
+            
+
+
     
-    #     try:
-    #         users_list = self.cursor.execute("SELECT * from users")
-    #         rows = users_list.fetchall()
-        
-    #         with open(csv_file, mode='w', newline='') as file:
-    #             writer = csv.writer(file)
-    #             writer.writerow([description[0] for description in self.cursor.description])
-    #             writer.writerows(rows)
-    #         backupversion+=1     
-    #         return csv_file
-        
-    #     except Exception as e:
-    #         print(f"Произошла ошибка при создании CSV файла: {e}")
-    #         return None
     def users_list(self):
-        # Получение списка пользователей из БД
+        #Получение списка пользователей из БД
+        csv_file = 'users_list.csv'
         users_list = self.cursor.execute("SELECT * from users")
         rows = users_list.fetchall()
-
-        user_list = []
-        column_names = [description[0] for description in self.cursor.description]
-        user_list.append(column_names)
-
-        for row in rows:
-            user_list.append(row)
-        print(user_list)
-        return user_list
+        print("Данные были получены, вот они", rows)
+    
+        try:
+            users_list = self.cursor.execute("SELECT * from users")
+            rows = users_list.fetchall()
         
-
+            with open(csv_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([description[0] for description in self.cursor.description])
+                writer.writerows(rows)
+   
+            return csv_file
+        
+        except Exception as e:
+            print(f"Произошла ошибка при создании CSV файла: {e}")
+            return None
+ 
+    def check_password(self, user_id):
+        users_list = self.cursor.execute("SELECT password from users where telegram_id = ?", user_id)
+        password = users_list.fetchone()
+        return password
+    
+    

@@ -7,7 +7,7 @@ import csv
 from db import BotDB
 router = Router()
 
-bot = Bot(token="5792325635:AAE6F_i7HCcQJWxKhEXhcsIktLJnTYiJtv8")
+bot = Bot(token="")
 
 
 

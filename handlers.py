@@ -63,5 +63,5 @@ async def get_users(query: types.CallbackQuery):
     except Exception as e:
         print(f"Произошла ошибка при отправке файла: {e}")
         await query.message.answer(text="Произошла ошибка при отправке файла")
-    
+    poebota = 0
     

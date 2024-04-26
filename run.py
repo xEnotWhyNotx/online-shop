@@ -9,9 +9,11 @@ import logging
 from handlers.admin.admin import admin_router
 from handlers.user.all_categories import all_categories_router
 from handlers.user.my_profile import my_profile_router
+from handlers.user.Nikita_handlers import nikita_router
 from services.user import UserService
 from utils.custom_filters import IsUserExistFilter
-
+import kb
+import Nikita_text
 logging.basicConfig(level=logging.INFO)
 
 
@@ -31,7 +33,8 @@ async def start(message: types.message):
     else:
         await UserService.update_receive_messages(user_telegram_id, True)
         await UserService.update_username(user_telegram_id, user_telegram_username)
-    await message.answer('Hi', reply_markup=start_markup)
+    #await message.answer('Hi', reply_markup=start_markup)
+    await message.answer(Nikita_text.greet.format(name=message.from_user.full_name), reply_markup=kb.start_menu)
 
 
 @dp.message(F.text == '🤝 FAQ', IsUserExistFilter())
@@ -61,6 +64,7 @@ main_router = Router()
 main_router.include_router(admin_router)
 main_router.include_router(my_profile_router)
 main_router.include_router(all_categories_router)
+main_router.include_router(nikita_router)
 dp.include_router(main_router)
 
 if __name__ == '__main__':

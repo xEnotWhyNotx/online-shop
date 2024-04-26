@@ -48,5 +48,4 @@ async def create_db_and_tables():
         else:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
-async def new_table():
-    nasral()
+

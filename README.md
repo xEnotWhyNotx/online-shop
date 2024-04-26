@@ -1,63 +1,56 @@
+
 # AiogramShopBot
 
-**AiogramShopBot is a software product based on Aiogram3.x and SQLAlchemy that allows you to automate sales of digital
-goods in Telegram. One of the advantages of the bot is that AiogramShopBot implements the ability to top up with
-Bitcoin, Litecoin, USDT TRC-20, which allows you to sell digital goods worldwide.**
+**AiogramShopBot - это программный продукт, основанный на Aiogram3.x и SQLAlchemy, который позволяет автоматизировать продажу цифровых товаров в Telegram. Одним из преимуществ бота является то, что AiogramShopBot реализует возможность пополнения с помощью Bitcoin, Litecoin, USDT TRC-20, что позволяет продавать цифровые товары по всему миру.**
 
 - [AiogramShopBot](#aiogramshopbot)
 
-* [1.Starting the bot](#1starting-the-bot)
-    + [1.1 Starting AiogramShopBot without SQLCipher database encryption with Docker-compose.](#11-starting-aiogramshopbot-with-docker-compose)
-    + [1.2 Starting AiogramShopBot without SQLCipher database encryption.](#12-starting-aiogramshopbot-without-sqlcipher-database-encryption)
-    + [1.3 Starting AiogramShopBot with SQLCipher database encryption.](#13-starting-aiogramshopbot-with-sqlcipher-database-encryption)
-* [2.AiogramShopBot User's Manual](#2aiogramshopbot-users-manual)
-    + [2.1 Registration](#21-registration)
-    + [2.2 Top-up balance](#22-top-up-balance)
-    + [2.3 Purchase of goods](#23-purchase-of-goods)
-    + [2.4 Purchase history](#24-purchase-history)
-* [3.AiogramShopBot Admin Manual](#3aiogramshopbot-admin-manual)
-    + [3.1 Adding a new admin](#31-adding-a-new-admin)
-    + [3.2 Send to all bot users functionality](#32-send-to-all-bot-users-functionality)
-    + [3.3 Adding new items to the bot](#33-adding-new-items-to-the-bot)
-    + [3.4 Send to everyone restocking message](#34-send-to-everyone-restocking-message)
-    + [3.5 Get new users](#35-get-new-users)
-    + [3.6 Delete categories and subcategories](#36-delete-categories-and-subcategories)
-    + [3.7 Make refund](#37-make-refund)
-    + [3.8 Admin notifications](#38-admin-notifications)
+* [1. Запуск бота](#1-запуск-бота)
+    + [1.1 Запуск AiogramShopBot без шифрования базы данных SQLCipher с помощью Docker-compose.](#11-запуск-aiogramshopbot-с-помощью-docker-compose)
+    + [1.2 Запуск AiogramShopBot без шифрования базы данных SQLCipher.](#12-запуск-aiogramshopbot-без-шифрования-базы-данных-sqlcipher)
+    + [1.3 Запуск AiogramShopBot с шифрованием базы данных SQLCipher.](#13-запуск-aiogramshopbot-с-шифрованием-базы-данных-sqlcipher)
+* [2. Руководство пользователя AiogramShopBot](#2-руководство-пользователя-aiogramshopbot)
+    + [2.1 Регистрация](#21-регистрация)
+    + [2.2 Пополнение баланса](#22-пополнение-баланса)
+    + [2.3 Покупка товаров](#23-покупка-товаров)
+    + [2.4 История покупок](#24-история-покупок)
+* [3. Руководство администратора AiogramShopBot](#3-руководство-администратора-aiogramshopbot)
+    + [3.1 Добавление нового администратора](#31-добавление-нового-администратора)
+    + [3.2 Функциональность "Отправить всем пользователям бота"](#32-функциональность-отправить-всем-пользователям-бота)
+    + [3.3 Добавление новых товаров в бот](#33-добавление-новых-товаров-в-бот)
+    + [3.4 Отправить всем сообщение о пополнении](#34-отправить-всем-сообщение-о-пополнении)
+    + [3.5 Получить новых пользователей](#35-получить-новых-пользователей)
+    + [3.6 Удалить категории и подкатегории](#36-удалить-категории-и-подкатегории)
+    + [3.7 Сделать возврат](#37-сделать-возврат)
+    + [3.8 Уведомления администратора](#38-уведомления-администратора)
 
-    - [3.8.1 Notification to admin about new deposit](#381-notification-to-admin-about-new-deposit)
-    - [3.8.2 Notification to admin about new buy](#382-notification-to-admin-about-new-buy)
-* [📋 Todo List](#-todo-list)
-* [✨ DONATE Buy Me Coffee](#-donate-buy-me-coffee)
+    - [3.8.1 Уведомление администратору о новом пополнении](#381-уведомление-администратору-о-новом-пополнении)
+    - [3.8.2 Уведомление администратору о новой покупке](#382-уведомление-администратору-о-новой-покупке)
+* [📋 Список задач](#-список-задач)
+* [✨ DONATE Купи мне кофе](#-donate-купи-мне-кофе)
 * [MIT License](LICENSE)
 
-## 1.Starting the bot
+## 1. Запуск бота
 
-### 1.1 Starting AiogramShopBot with Docker-compose.
+### 1.1 Запуск AiogramShopBot с помощью Docker-compose.
 
-* Clone the project from the master branch.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git``
-* If you want to use the version with database encryption, clone from the feature/sqlalchemy-sqlcipher
-  branch.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
-* Set environment variables in docker-compose.yml file, token from @BotFather(``TOKEN``), token from
-  ngrok(``NGROK_TOKEN``), telegram id of admins(``ADMIN_ID_LIST``), support link (``SUPPORT_LINK``, the link will be
-  needed for the "Help" button in the bot).
-* If you use the version with database encryption, you must set a variable with the password from the
-  database (``DB_PASS``).
-* Run the ``docker-compose up`` command.
+* Клонируйте проект из ветки master.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git``
+* Если вы хотите использовать версию с шифрованием базы данных, клонируйте из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
+* Установите переменные окружения в файле docker-compose.yml, токен от @BotFather(``TOKEN``), токен от ngrok(``NGROK_TOKEN``), telegram id администраторов(``ADMIN_ID_LIST``), ссылка на поддержку (``SUPPORT_LINK``, эта ссылка понадобится для кнопки "Помощь" в боте).
+* Если вы используете версию с шифрованием базы данных, вы должны установить переменную с паролем от базы данных (``DB_PASS``).
+* Запустите команду ``docker-compose up``.
 
-> **Note**
-> **<br>To get the ngrok token, you need to register on the ngrok website and confirm your email. Then you will have the
-ngrok token in your personal account.**
+> **Примечание**
+> **<br>Чтобы получить токен ngrok, вам нужно зарегистрироваться на сайте ngrok и подтвердить свой email. Затем у вас будет токен ngrok в вашем личном кабинете.**
 
-### 1.2 Starting AiogramShopBot without SQLCipher database encryption.
+### 1.2 Запуск AiogramShopBot без шифрования базы данных SQLCipher.
 
-> **Note**
-> **<br>Fully compatible with python 3.9.6.<br>AiogramShopBot from the master branch does not use database encryption
-via SQLCipher, but it does use Aiosqlite**
+> **Примечание**
+> **<br>Полностью совместим с python 3.9.6.<br>AiogramShopBot из ветки master не использует шифрование базы данных через SQLCipher, но использует Aiosqlite**
 
-* Clone the project from the master branch. ``git clone git@github.com:ilyarolf/AiogramShopBot.git``
-* Install all necessary packages ``pip install -r requirements.txt``
-* Set the environment variables to run in the .env file.<br>Example:
+* Клонируйте проект из ветки master. ``git clone git@github.com:ilyarolf/AiogramShopBot.git``
+* Установите все необходимые пакеты ``pip install -r requirements.txt``
+* Установите переменные окружения для запуска в файле .env.<br>Пример:
 
 ```
 WEBHOOK_PATH = "/bot"
@@ -69,21 +62,17 @@ SUPPORT_LINK = "https://t.me/your_username_123"
 DB_NAME = "db_file_name.db"
 ```
 
+* После этих шагов бот готов к запуску, точка входа для запуска бота - run.py ```python run.py```
 
-* After these steps the bot is ready to run, the entry point to run the bot is run.py ```python run.py```
+### 1.3 Запуск AiogramShopBot с шифрованием базы данных SQLCipher.
 
-### 1.3 Starting AiogramShopBot with SQLCipher database encryption.
+> **Примечание**
+> **<br>Для запуска AiogramShopBot с шифрованием базы данных через SQLCipher рекомендуется использовать операционные системы на ядре Linux, так как установка SQLCipher на Windows не самая простая.**
 
-> **Note**
-> **<br>To run AiogramShopBot with database encryption via SQLCipher, it is recommended to use Linux kernel operating
-systems because installing SQLCipher on Windows is not the easiest.**
-
-* Clone the project from the feature/sqlalchemy-sqlcipher
-  branch.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
-* Install the SQLCipher package, for example in Ubuntu this can be done with the command ``sudo apt install sqlcipher``.
-* Install all necessary packages ``pip install -r requirements.txt``
-* Variables in .env are set in the same way as in point 1.1, but with one exception, you need to set a password for the
-  database.<br>Example:
+* Клонируйте проект из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
+* Установите пакет SQLCipher, например, в Ubuntu это можно сделать командой ``sudo apt install sqlcipher``.
+* Установите все необходимые пакеты ``pip install -r requirements.txt``
+* Переменные в .env устанавливаются так же, как в пункте 1.1, но с одним исключением, вам нужно установить пароль для базы данных.<br>Пример:
 
 ```
 WEBHOOK_PATH = "/bot"
@@ -96,195 +85,126 @@ DB_NAME = "db_file_name.db"
 DB_PASS = "your_password_to_database"
 ```
 
-* After these steps the bot is ready to run, the entry point to run the bot is run.py ```python run.py```
+* После этих шагов бот готов к запуску, точка входа для запуска бота - run.py ```python run.py```
 
-## 2.AiogramShopBot User's Manual
+## 2. Руководство пользователя AiogramShopBot
 
-### 2.1 Registration
+### 2.1 Регистрация
 
-User registration occurs when the bot is first accessed with the ``/start`` command. Each user is assigned a different
-mnemonic phrase to generate BTC, LTC, USDT TRC20 crypto addresses. BTC and LTC addresses are generated according to
-BIP-84 standard, for USDT TRC20 the BIP-44 standard is used, this is done so that wallets can be easily imported into
-Trust Wallet.
+Регистрация пользователя происходит при первом обращении к боту с командой ``/start``. Каждому пользователю присваивается разная мнемоническая фраза для генерации BTC, LTC, USDT TRC20 криптовалютных адресов. Адреса BTC и LTC генерируются в соответствии со стандартом BIP-84, для USDT TRC20 используется стандарт BIP-44, это сделано для того, чтобы кошельки можно было легко импортировать в Trust Wallet.
 
-### 2.2 Top-up balance
+### 2.2 Пополнение баланса
 
-To deposit balance in the bot, go to "My Profile -> Top Up balance". Copy the address of the cryptocurrency you want to
-top up and send the cryptocurrency there, then go back to "My Profile" and click "Refresh Balance". Refreshing the
-balance takes some time (1-2 seconds).
-> **Note**
-> "Refresh balance" button has a 30 second cooldown.
+Для пополнения баланса в боте, перейдите в "Мой профиль -> Пополнить баланс". Скопируйте адрес той криптовалюты, которую хотите пополнить, и отправьте криптовалюту туда, затем вернитесь в "Мой профиль" и нажмите "Обновить баланс". Обновление баланса занимает некоторое время (1-2 секунды).
+> **Примечание**
+> Кнопка "Обновить баланс" имеет 30-секундную задержку.
 
-### 2.3 Purchase of goods
+### 2.3 Покупка товаров
 
-To buy any item, go to "All categories" -> Select any category -> Select any subcategory -> Select quantity -> Confirm
-purchase. If the purchase is successful, you will immediately receive a message in the format:
+Для покупки любого товара, перейдите в "Все категории" -> Выберите любую категорию -> Выберите любую подкатегорию -> Выберите количество -> Подтвердите покупку. Если покупка прошла успешно, вы сразу же получите сообщение в формате:
 
 ```
-Item#1
-Data: DataOfItem#1
-Item#2
-Data:DataOfItem#2
-Item#3
-Data:DataOfItem#3
-Item#4
-Data:DataOfItem#4
-Item#5
-Data:DataOfItem#5
-Item#6
-Data:DataOfItem#6
-Item#7
-Data:DataOfItem#7
-Item#8
-Data:DataOfItem#8
-Item#9
-Data:DataOfItem#9
-Item#10
-Data:DataOfItem#10
+Товар#1
+Данные: ДанныеТовара#1
+Товар#2
+Данные:ДанныеТовара#2
+Товар#3
+Данные:ДанныеТовара#3
+Товар#4
+Данные:ДанныеТовара#4
+Товар#5
+Данные:ДанныеТовара#5
+Товар#6
+Данные:ДанныеТовара#6
+Товар#7
+Данные:ДанныеТовара#7
+Товар#8
+Данные:ДанныеТовара#8
+Товар#9
+Данные:ДанныеТовара#9
+Товар#10
+Данные:ДанныеТовара#10
 ```
 
-### 2.4 Purchase history
+### 2.4 История покупок
 
-* To access your purchase history go to "My Profile" -> "Purchase History".
-* You will be presented with an inline keyboard with all your purchases, by clicking on any of the purchases you will be
-  sent a message in the format from paragraph 2.3.
+* Для доступа к истории ваших покупок перейдите в "Мой профиль" -> "История покупок".
+* Вам будет представлена инлайн-клавиатура со всеми вашими покупками, нажав на любую из покупок, вам будет отправлено сообщение в формате из пункта 2.3.
 
-## 3.AiogramShopBot Admin Manual
+## 3. Руководство администратора AiogramShopBot
 
-### 3.1 Adding a new admin
+### 3.1 Добавление нового администратора
 
-To add a new admin you need to add his telegram id to the ADMIN_ID_LIST environment variable, separated by commas, and
-reload the bot.<br>For example: ``ADMIN_ID_LIST=123456,654321``
+Чтобы добавить нового администратора, вам нужно добавить его telegram id в переменную окружения ADMIN_ID_LIST, разделенную запятыми, и перезагрузить бота.<br>Например: ``ADMIN_ID_LIST=123456,654321``
 
-### 3.2 Send to all bot users functionality
+### 3.2 Функциональность "Отправить всем пользователям бота"
 
-* Open the admin panel by entering the command ``/admin``, then click on the "Send to everyone" button.
-* Type a message or forward to the bot, the bot supports sending a message with pictures and Telegram markup (bold,
-  italics, spoilers, etc.).
-* Confirm or decline the sending of messages.
-* After successful message sending, the original message with inline buttons "Confirm", "Decline" will change
-  to ``Message sent to x out of y people``.
+* Откройте панель администратора, введя команду ``/admin``, затем нажмите на кнопку "Отправить всем".
+* Напишите сообщение или перешлите боту, бот поддерживает отправку сообщения с картинками и разметкой Telegram (жирный, курсив, спойлеры и т.д.).
+* Подтвердите или откажитесь от отправки сообщений.
+* После успешной отправки сообщений, исходное сообщение с инлайн-кнопками "Подтвердить", "Отклонить" изменится
+  на ``Сообщение отправлено x из y человек``.
 
-### 3.3 Adding new items to the bot
+### 3.3 Добавление новых товаров в бот
 
-> **Note**
-> The functionality for adding new products so far supports adding products using .json files.
+> **Примечание**
+> Функциональность для добавления новых товаров пока поддерживает добавление товаров с помощью .json файлов.
 
-* Open the admin panel by entering the command ``/admin``.
-* Click on the "Add new items" button.
-* Send .json file with new items.<br>Example of .json file:
+* Откройте панель администратора, введя команду ``/admin``.
+* Нажмите на кнопку "Добавить новые товары".
+* Отправьте .json файл с новыми товарами.<br>Пример .json файла:
 
 ```
 {
 	"items": [
 		{
-			"category": "Category#1",
-			"subcategory": "Subcategory#1",
+			"category": "Категория#1",
+			"subcategory": "Подкатегория#1",
 			"price": 50,
-			"description": "Mocked description",
-			"private_data": "Mocked private data"
+			"description": "Имитированное описание",
+			"private_data": "Имитированные приватные данные"
 		},
 		{
-			"category": "Category#2",
-			"subcategory": "Subcategory#2",
+			"category": "Категория#2",
+			"subcategory": "Подкатегория#2",
 			"price": 100,
-			"description": "Mocked description",
-			"private_data": "Mocked private data"
+			"description": "Имитированное описание",
+			"private_data": "Имитированные приватные данные"
 		}
 	]
 }
 ```
 
-> **Note**
-> The "private_data" property is what the user gets when they make a purchase.
+> **Примечание**
+> Свойство "private_data" - это то, что получает пользователь при совершении покупки.
 
-### 3.4 Send to everyone restocking message
+### 3.4 Отправить всем сообщение о пополнении
 
-* Open the admin panel by entering the command ``/admin``.
-* Click on the "Send restocking message" button.
+* Откройте панель администратора, введя команду ``/admin``.
+* Нажмите на кнопку "Отправить сообщение о пополнении".
 
-> **Note**
-> Restocking message is generated automatically and looks as follows:
-
-```
-📅 Update YYYY-MM-DD
-
-📁 Category Category#1
-
-📄 Subcategory Subcategory#1 1 pcs
-
-📁 Category Category#2
-
-📄 Subcategory Subcategory#2 1 pcs
-``` 
-
-### 3.5 Get new users
-
-* Open the admin panel by entering the command ``/admin``.
-* Click on the "Send restocking message" button.
-* You will get a message ``x new users:`` with inline buttons that will take you to chat with each new user who has a
-  nickname.
-
-### 3.6 Delete categories and subcategories
-
-* Open the admin panel by entering the command ``/admin``.
-* Click on the ``Delete category`` or ``Delete subcategory`` button.
-* Select a category or subcategory, confirm deletion. If the deletion is successful, you will receive the
-  message ``Sucessfully deleted {name} category/subcategory``
-
-### 3.7 Make refund
-
-> **Note**
-> Refunds returns money to the user's balance in the bot.
-
-* Open the admin panel by entering the command ``/admin``.
-* Click on the ``Make refund`` button.
-* In the received message you will have inline buttons in the
-  format ``TelegramID/TelegramUsername|TotalPrice|SubcategoryName``.<br>For example: ``@durov|$500.0|Test subcategory``.
-* Select the purchase for which you want to make a refund.
-* You will receive a message
-  in ``Do you really want to refund user @durov for purchasing 1 SubcategoryName in the amount of $500.0`` format.
-  Confirm or decline the refund.
-* If the refund is successful, you will receive
-  a ``Successfully refunded $500.0 to user durov for purchasing 1 SubcategoryName`` message.
-* The user to whom you returned the message will also receive a message
-  in ``You have been refunded $50.0 for the purchase of 1 pieces of SubcategoryName`` format.
-
-### 3.8 Admin notifications
-
-> **Note**
-> All users with telegram id in the .env ADMIN_ID_LIST environment variable will receive these notifications
-
-#### 3.8.1 Notification to admin about new deposit
-
-* If any user topped up the balance and clicked on the "Refresh balance" button, you will receive the following message
-  from the bot:
+> **Примечание**
+> Сообщение о пополнении генерируется автоматически и выглядит следующим образом:
 
 ```
-New deposit by user with username @durov for $500 with 0.01 BTC
-BTC address:bc1pvz78lx4lw0sutcu0l5szn74ke0hrkghvdg2u8wc705alr5hj9l4q8hzymp
-Seed: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon
+📅 Обновление YYYY-MM-DD
+
+📁 Категория Категория#1
+
+📄 Подкатегория Подкатегория#1 1 шт
+
+📁 Категория Категория#2
+
+📄 Подкатегория Подкатегория#2 1 шт
 ```
 
-#### 3.8.2 Notification to admin about new buy
+### 3.5 Получить новых пользователей
 
-After each purchase, you will receive a message in the format:
+* Откройте панель администратора, введя команду ``/admin``.
+* Нажмите на кнопку "Отправить сообщение о пополнении".
+* Вы получите сообщение ``x новых пользователей:`` с инлайн-кнопками, которые переведут вас в чат с каждым новым пользователем, у которого есть никнейм.
 
-```
-A new purchase by user @durov for the amount of $500.0 for the purchase of a 1 pcs SubcategoryName.
-```
+### 3.6 Удалить категории и подкатегории
 
-## 📋 Todo List
-
-- [x] Make migration from direct raw database queries to SQLAlchemy ORM.
-- [x] Add option to encrypt database via SQLCipher (when using SQLAlchemy).
-- [x] Add an option to generate new crypto addresses using new mnemonic phrases so that 1 user=1 mnemonic phrase.
-- [x] Items pagination.
-- [x] Make the functionality of database backup by action in the admin in the Telegram bot.
-- [x] Make the functionality of generating statistics of sales and users in the bot for a month/week/day in the admin
-  panel.
-- [ ] Make the functionality of generating statistics of deposits in the bot for a month/week in the admin
-  panel.
-
-## ✨ DONATE Buy Me Coffee
-
+* Откройте панель администратора, введя команду ``/admin``.
+* Нажмите на кнопку ``Удалить категорию`` или ``Удалить подкатегорию

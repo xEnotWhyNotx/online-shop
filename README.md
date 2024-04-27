@@ -1,20 +1,20 @@
 
-# AiogramShopBot
+# GigaShopBot
 
-**AiogramShopBot - это программный продукт, основанный на Aiogram3.x и SQLAlchemy, который позволяет автоматизировать продажу цифровых товаров в Telegram. Одним из преимуществ бота является то, что AiogramShopBot реализует возможность пополнения с помощью Bitcoin, Litecoin, USDT TRC-20, что позволяет продавать цифровые товары по всему миру.**
+**GigaShopBot - это программный продукт, основанный на Aiogram3.x и SQLAlchemy, который позволяет автоматизировать продажу товаров в Telegram. Одним из преимуществ бота является то, что GigaShopBot реализует возможность пополнения с помощью Bitcoin, Litecoin, USDT TRC-20, что позволяет продавать цифровые товары по всему миру.**
 
-- [AiogramShopBot](#aiogramshopbot)
+- [GigaShopBot](#gigashopbot)
 
 * [1. Запуск бота](#1-запуск-бота)
-    + [1.1 Запуск AiogramShopBot без шифрования базы данных SQLCipher с помощью Docker-compose.](#11-запуск-aiogramshopbot-с-помощью-docker-compose)
-    + [1.2 Запуск AiogramShopBot без шифрования базы данных SQLCipher.](#12-запуск-aiogramshopbot-без-шифрования-базы-данных-sqlcipher)
-    + [1.3 Запуск AiogramShopBot с шифрованием базы данных SQLCipher.](#13-запуск-aiogramshopbot-с-шифрованием-базы-данных-sqlcipher)
-* [2. Руководство пользователя AiogramShopBot](#2-руководство-пользователя-aiogramshopbot)
+    + [1.1 Запуск GigaShopBot без шифрования базы данных SQLCipher с помощью Docker-compose.](#11-запуск-gigashopbot-с-помощью-docker-compose)
+    + [1.2 Запуск GigaShopBot без шифрования базы данных SQLCipher.](#12-запуск-gigashopbot-без-шифрования-базы-данных-sqlcipher)
+    + [1.3 Запуск GigaShopBot с шифрованием базы данных SQLCipher.](#13-запуск-gigashopbot-с-шифрованием-базы-данных-sqlcipher)
+* [2. Руководство пользователя GigaShopBot](#2-руководство-пользователя-gigashopbot)
     + [2.1 Регистрация](#21-регистрация)
     + [2.2 Пополнение баланса](#22-пополнение-баланса)
     + [2.3 Покупка товаров](#23-покупка-товаров)
     + [2.4 История покупок](#24-история-покупок)
-* [3. Руководство администратора AiogramShopBot](#3-руководство-администратора-aiogramshopbot)
+* [3. Руководство администратора GigaShopBot](#3-руководство-администратора-gigashopbot)
     + [3.1 Добавление нового администратора](#31-добавление-нового-администратора)
     + [3.2 Функциональность "Отправить всем пользователям бота"](#32-функциональность-отправить-всем-пользователям-бота)
     + [3.3 Добавление новых товаров в бот](#33-добавление-новых-товаров-в-бот)
@@ -32,10 +32,10 @@
 
 ## 1. Запуск бота
 
-### 1.1 Запуск AiogramShopBot с помощью Docker-compose.
+### 1.1 Запуск GigaShopBot с помощью Docker-compose.
 
-* Клонируйте проект из ветки master.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git``
-* Если вы хотите использовать версию с шифрованием базы данных, клонируйте из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
+* Клонируйте проект из ветки master.<br>``git clone git@github.com:xEnotWhyNotx/online-shop.git``
+* Если вы хотите использовать версию с шифрованием базы данных, клонируйте из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:xEnotWhyNotx/online-shop.git -b feature/sqlalchemy-sqlcipher``
 * Установите переменные окружения в файле docker-compose.yml, токен от @BotFather(``TOKEN``), токен от ngrok(``NGROK_TOKEN``), telegram id администраторов(``ADMIN_ID_LIST``), ссылка на поддержку (``SUPPORT_LINK``, эта ссылка понадобится для кнопки "Помощь" в боте).
 * Если вы используете версию с шифрованием базы данных, вы должны установить переменную с паролем от базы данных (``DB_PASS``).
 * Запустите команду ``docker-compose up``.
@@ -43,12 +43,12 @@
 > **Примечание**
 > **<br>Чтобы получить токен ngrok, вам нужно зарегистрироваться на сайте ngrok и подтвердить свой email. Затем у вас будет токен ngrok в вашем личном кабинете.**
 
-### 1.2 Запуск AiogramShopBot без шифрования базы данных SQLCipher.
+### 1.2 Запуск GigaShopBot без шифрования базы данных SQLCipher.
 
 > **Примечание**
-> **<br>Полностью совместим с python 3.9.6.<br>AiogramShopBot из ветки master не использует шифрование базы данных через SQLCipher, но использует Aiosqlite**
+> **<br>Полностью совместим с python 3.9.6.<br>GigaShopBot из ветки master не использует шифрование базы данных через SQLCipher, но использует Aiosqlite**
 
-* Клонируйте проект из ветки master. ``git clone git@github.com:ilyarolf/AiogramShopBot.git``
+* Клонируйте проект из ветки master. ``git clone git@github.com:xEnotWhyNotx/online-shop.git``
 * Установите все необходимые пакеты ``pip install -r requirements.txt``
 * Установите переменные окружения для запуска в файле .env.<br>Пример:
 
@@ -64,12 +64,12 @@ DB_NAME = "db_file_name.db"
 
 * После этих шагов бот готов к запуску, точка входа для запуска бота - run.py ```python run.py```
 
-### 1.3 Запуск AiogramShopBot с шифрованием базы данных SQLCipher.
+### 1.3 Запуск GigaShopBot с шифрованием базы данных SQLCipher.
 
 > **Примечание**
-> **<br>Для запуска AiogramShopBot с шифрованием базы данных через SQLCipher рекомендуется использовать операционные системы на ядре Linux, так как установка SQLCipher на Windows не самая простая.**
+> **<br>Для запуска GigaShopBot с шифрованием базы данных через SQLCipher рекомендуется использовать операционные системы на ядре Linux, так как установка SQLCipher на Windows не самая простая.**
 
-* Клонируйте проект из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:ilyarolf/AiogramShopBot.git -b feature/sqlalchemy-sqlcipher``
+* Клонируйте проект из ветки feature/sqlalchemy-sqlcipher.<br>``git clone git@github.com:xEnotWhyNotx/online-shop.git -b feature/sqlalchemy-sqlcipher``
 * Установите пакет SQLCipher, например, в Ubuntu это можно сделать командой ``sudo apt install sqlcipher``.
 * Установите все необходимые пакеты ``pip install -r requirements.txt``
 * Переменные в .env устанавливаются так же, как в пункте 1.1, но с одним исключением, вам нужно установить пароль для базы данных.<br>Пример:
@@ -87,7 +87,7 @@ DB_PASS = "your_password_to_database"
 
 * После этих шагов бот готов к запуску, точка входа для запуска бота - run.py ```python run.py```
 
-## 2. Руководство пользователя AiogramShopBot
+## 2. Руководство пользователя GigaShopBot
 
 ### 2.1 Регистрация
 
@@ -131,7 +131,7 @@ DB_PASS = "your_password_to_database"
 * Для доступа к истории ваших покупок перейдите в "Мой профиль" -> "История покупок".
 * Вам будет представлена инлайн-клавиатура со всеми вашими покупками, нажав на любую из покупок, вам будет отправлено сообщение в формате из пункта 2.3.
 
-## 3. Руководство администратора AiogramShopBot
+## 3. Руководство администратора GigaShopBot
 
 ### 3.1 Добавление нового администратора
 

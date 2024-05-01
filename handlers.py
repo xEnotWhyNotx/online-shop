@@ -6,17 +6,43 @@ import text
 import csv
 from db import BotDB
 import aiofiles
+from States import user_states
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 router = Router()
-bot_db = BotDB('online-shop.db')
+bot_db = BotDB('online-shop_V2_1.db')
 
 
 
 @router.message(Command("start"))
-async def start_handler(msg: Message):
+async def start_handler(msg: Message, state:FSMContext):
     user_id = msg.from_user.id
-    await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.start_menu)
-    await msg.answer(text = f"Твой телеграм id: {user_id}")
-    
+    name= msg.from_user.full_name
+    bot_db = BotDB('online-shop_V2_1.db')
+    if bot_db.is_user_in_db(user_id):
+        await msg.answer(text = f"Вижу вас в базе. С возвращением, {name}")
+        await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.start_menu)
+    else:
+        bot_db.create_new_user(user_id)
+        await msg.answer(text = f"Кажется, вы у нас впервые. Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
+        await state.set_state(user_states.waiting_for_users_role)
+
+
+@router.message(user_states.waiting_for_users_role)
+async def add_role(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    if message.text == "Продавец":
+        bot_db.insert_seller(user_id)
+        await message.answer(text=f"Вы были успешно добавлены как продавец. Для продолжения введите команду /start")
+        await state.clear()
+    elif message.text == "Покупатель":
+        bot_db.insert_customer(user_id)
+        await message.answer(text=f"Вы были успешно добавлены как покупатель. Для продолжения введите команду /start")
+        await state.clear()
+
+#@router.message(user_states.waiting_for_users_role and Message.text == "Покупатель")
+
+
 
 @router.message(F.text == "get_guide")
 @router.message(F.text == "Выйти в меню")
@@ -49,6 +75,4 @@ async def get_users(query: types.CallbackQuery):
         print(f"Произошла ошибка при отправке файла: {e}")
         await query.message.answer(text="Произошла ошибка при отправке файла")
 
-@router.callback_query(F.data == "authorize")
-async def check_password(query: types.CallbackQuery):
-    bot_db.create_user()
+

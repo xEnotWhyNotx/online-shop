@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, \
     ReplyKeyboardRemove
-
+from aiogram import types
 # menu = [
 #     [InlineKeyboardButton(text="📝 Генерировать текст", callback_data="generate_text"),
 #      InlineKeyboardButton(text="🖼 Генерировать изображение", callback_data="generate_image")],
@@ -10,6 +10,21 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 #      InlineKeyboardButton(text="🎁 Бесплатные токены", callback_data="free_tokens")],
 #     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 # ]
+
+
+
+select_role_button = [[
+    KeyboardButton(text="Покупатель"),
+    KeyboardButton(text="Продавец")
+                    ]]
+                    
+
+select_role_menu = ReplyKeyboardMarkup(keyboard = select_role_button, resize_keyboard = True)
+
+start_menu1 = [[InlineKeyboardButton(text="Зайти в аккаунт", callback_data="login")],
+     [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]]
+
+
 
 start_menu1 = [[InlineKeyboardButton(text="Зайти в аккаунт", callback_data="login")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]]

@@ -4,11 +4,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import router
-
+from token1 import token
 
 
 async def main():
-    bot = Bot(token="7113546929:AAEBaIJvMn5ZISnyJPi8Vk2bPEKHkQYP0AE")
+    bot = Bot(token=token)
     dp = Dispatcher()
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)

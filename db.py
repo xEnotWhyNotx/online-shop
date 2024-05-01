@@ -8,14 +8,14 @@ class BotDB:
         self.cursor = self.conn.cursor()
         
 
-    def create_user(self, user_id):
-        checking_user = self.cursor.execute("select * from users where telegram_id = ?", user_id).fetchone()
-        if not checking_user:
-            self.cursor.execute("INSERT INTO users (telegram_id) values (?)", user_id)
-            self.conn.commit()
-            return 1
-        else:
-            pass
+    # def create_user(self, user_id):
+    #     checking_user = self.cursor.execute("select * from users where telegram_id = ?", user_id).fetchone()
+    #     if not checking_user:
+    #         self.cursor.execute("INSERT INTO users (telegram_id) values (?)", user_id)
+    #         self.conn.commit()
+    #         return 1
+    #     else:
+    #         pass
             
 
 
@@ -41,10 +41,23 @@ class BotDB:
         except Exception as e:
             print(f"Произошла ошибка при создании CSV файла: {e}")
             return None
- 
-    def check_password(self, user_id):
-        users_list = self.cursor.execute("SELECT password from users where telegram_id = ?", user_id)
-        password = users_list.fetchone()
-        return password
+
     
+    def is_user_in_db(self, user_id):
+        query = self.cursor.execute("Select Telegram_id from Users where Telegram_id = ?", (user_id,)).fetchone()
+        if query == None:
+            return False
+        else:
+            return True
     
+    def create_new_user(self, user_id):
+        self.cursor.execute("INSERT INTO users (Telegram_id) values(?)", (user_id, ))
+        self.conn.commit()
+    
+    def insert_seller(self, user_id):
+        self.cursor.execute("UPDATE users set role = ? where telegram_id = ?", ("Seller", user_id))
+        self.conn.commit()
+    
+    def insert_customer(self, user_id):
+        self.cursor.execute("UPDATE users set role = ? where telegram_id = ?", ("Customer", user_id))
+        self.conn.commit()

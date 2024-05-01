@@ -7,15 +7,13 @@ import csv
 from db import BotDB
 import aiofiles
 router = Router()
-user_id = int()
 bot_db = BotDB('online-shop.db')
 
 
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
-    global user_id
-    user_id = Message.from_user.id
+    user_id = types.user.User.id
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.start_menu)
     await Message.answer(f"Твой телеграм id: {user_id}")
     
@@ -52,5 +50,5 @@ async def get_users(query: types.CallbackQuery):
         await query.message.answer(text="Произошла ошибка при отправке файла")
 
 @router.callback_query(F.data == "authorize")
-async def check_password(query: types.callbackQuery):
+async def check_password(query: types.CallbackQuery):
     bot_db.create_user()

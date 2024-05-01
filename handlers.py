@@ -13,9 +13,9 @@ bot_db = BotDB('online-shop.db')
 
 @router.message(Command("start"))
 async def start_handler(msg: Message):
-    user_id = types.user.User.id
+    user_id = msg.from_user.id
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.start_menu)
-    await Message.answer(f"Твой телеграм id: {user_id}")
+    await msg.answer(text = f"Твой телеграм id: {user_id}")
     
 
 @router.message(F.text == "get_guide")

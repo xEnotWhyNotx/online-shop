@@ -1,3 +1,3 @@
-id,telegram_id,role
-1,12345,1
-2,5343,2
+Telegram_id,First_name,Last_name,Role,PhoneNumber,Email,Seller_id
+1111,,,,,,
+476067112,,,Administrator,,,

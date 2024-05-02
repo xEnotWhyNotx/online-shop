@@ -30,7 +30,7 @@ admin_role_menu = InlineKeyboardMarkup(inline_keyboard=admin_role_button)
 
 seller_role_button = [
      [InlineKeyboardButton(text="Добавить карточку товара", callback_data="create_item")],
-     [InlineKeyboardButton(text="Отобразить заказы моего магазина", callback_data="plug")],
+     [InlineKeyboardButton(text="Отобразить заказы моего магазина", callback_data="get_this_seller_orders")],
      [InlineKeyboardButton(text="Изменить название магазина", callback_data="plug")],
      [InlineKeyboardButton(text="Сменить роль на покупателя", callback_data="switch_user_role_to_customer")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]

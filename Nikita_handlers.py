@@ -77,6 +77,7 @@ async def get_users(query: types.CallbackQuery):
         async with aiofiles.open(csv_file, mode='rb') as file:
             input_file = types.FSInputFile('users_list.csv')
             await query.message.answer_document(input_file)
+            await query.answer()
     except Exception as e:
         print(f"Произошла ошибка при отправке файла: {e}")
         await query.message.answer(text="Произошла ошибка при отправке файла")
@@ -134,3 +135,19 @@ async def switch_user_role_to_customer(query:CallbackQuery):
     user_id = query.from_user.id
     bot_db.switch_user_role_to_customer(user_id)
     await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")
+
+@rt.callback_query(F.data == "get_this_seller_orders")
+async def get_orders(query: types.CallbackQuery):
+    user_id = query.from_user.id
+    bot_db.get_seller_orders(user_id)
+    csv_file = f"order_list_for_this_seller_{user_id}.csv"
+
+    try:
+        async with aiofiles.open(csv_file, mode='rb') as file:
+            input_file = types.FSInputFile(f"order_list_for_this_seller_{user_id}.csv")
+            await query.message.answer_document(input_file)
+            await query.answer()
+    except Exception as e:
+        print(f"Произошла ошибка при отправке файла: {e}")
+        await query.message.answer(text="Произошла ошибка при отправке файла")
+        await query.answer()

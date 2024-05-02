@@ -121,3 +121,16 @@ async def add_amount(message: Message, state: FSMContext):
 @rt.callback_query(F.data == "plug")
 async def plug(query:CallbackQuery):
     await query.answer(text = "Данный функционал еще не реализован, однако мы уже работаем над ним")
+
+
+@rt.callback_query(F.data == "switch_user_role_to_seller")
+async def switch_user_role_to_seller(query:CallbackQuery):
+    user_id = query.from_user.id
+    bot_db.switch_user_role_to_seller(user_id)
+    await query.answer(text = f"Вы успешно сменили роль на продавца. Чтобы открыть новое меню, введите команду /start")
+
+@rt.callback_query(F.data == "switch_user_role_to_customer")
+async def switch_user_role_to_customer(query:CallbackQuery):
+    user_id = query.from_user.id
+    bot_db.switch_user_role_to_customer(user_id)
+    await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")

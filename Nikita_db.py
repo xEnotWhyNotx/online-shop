@@ -120,3 +120,11 @@ class BotDB:
         global actual_id
         self.cursor.execute('''UPDATE items set amount = ? where item_id = (?)''', (amount, actual_id) )
         self.conn.commit()  
+    
+    def switch_user_role_to_seller(self, user_id):
+        self.cursor.execute('''UPDATE Users set role = ? where Telegram_id = (?)''', ("Seller", user_id) )
+        self.conn.commit()
+    
+    def switch_user_role_to_customer(self, user_id):
+        self.cursor.execute('''UPDATE Users set role = ? where Telegram_id = (?)''', ("Customer", user_id) )
+        self.conn.commit()

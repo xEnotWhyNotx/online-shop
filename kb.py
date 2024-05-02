@@ -32,6 +32,7 @@ seller_role_button = [
      [InlineKeyboardButton(text="Добавить карточку товара", callback_data="create_item")],
      [InlineKeyboardButton(text="Отобразить заказы моего магазина", callback_data="plug")],
      [InlineKeyboardButton(text="Изменить название магазина", callback_data="plug")],
+     [InlineKeyboardButton(text="Сменить роль на покупателя", callback_data="switch_user_role_to_customer")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
                ]
 
@@ -40,7 +41,7 @@ seller_role_menu = InlineKeyboardMarkup(inline_keyboard=seller_role_button)
 customer_role_button = [
      [InlineKeyboardButton(text="Указать интересующий товар вручную", callback_data = "plug")],
      [InlineKeyboardButton(text="Найти товар через конфигуратор", callback_data = "plug")],
-     [InlineKeyboardButton(text="Сменить роль", callback_data="plug")],
+     [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="switch_user_role_to_seller")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
                ]
 

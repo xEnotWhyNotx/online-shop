@@ -36,7 +36,9 @@ async def start_handler(msg: Message, state:FSMContext):
         
         elif user_role == ('Administrator',):
             await msg.answer(text = f"Вы авторизованы как администратор. С возвращением, {name}", reply_markup=kb.admin_role_menu)
-    
+        elif user_role == (None,):
+            await msg.answer(text = f"Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
+            await state.set_state(user_states.waiting_for_users_role)
     else:
         bot_db.create_new_user(user_id)
         await msg.answer(text = f"Кажется, вы у нас впервые. Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)

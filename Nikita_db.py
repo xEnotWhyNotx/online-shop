@@ -2,6 +2,7 @@ import sqlite3
 import csv
 class BotDB:
     actual_id = int()
+    
     def __init__(self, db_file):
         #Инициализация соединения с бд
         self.conn = sqlite3.connect(db_file)
@@ -42,6 +43,7 @@ class BotDB:
         self.conn.commit()
     
     def insert_seller(self, user_id):
+        self.cursor.execute('''INSERT INTO Seller (Seller_Telegram_id) VALUES (?)''', (user_id, ))
         self.cursor.execute("UPDATE users set role = ? where telegram_id = ?", ("Seller", user_id))
         self.conn.commit()
     
@@ -148,4 +150,8 @@ class BotDB:
     
     def insert_picture(self, picture):
         self.cursor.execute('''UPDATE Items set Picture = ? where item_id = (?)''', (picture, actual_id))
+        self.conn.commit()
+        
+    def insert_shop_description(self, text, Telegram_id):
+        self.cursor.execute('''UPDATE Seller set Description = ? where Seller_Telegram_id = (?)''', (text, Telegram_id))
         self.conn.commit()

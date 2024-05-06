@@ -8,6 +8,8 @@ from Nikita_db import BotDB
 import aiofiles
 from States import user_states
 from aiogram.fsm.context import FSMContext
+import re
+
 rt = Router()
 bot_db = BotDB('online-shop_V2_1.db')
 
@@ -90,16 +92,26 @@ async def get_users(query: types.CallbackQuery):
 async def create_item(query:types.CallbackQuery, state:FSMContext):
     #Инициализация создания новой карточки товара#
     new_id = bot_db.create_new_item()
-    await query.message.answer(text="Пожалуйста, укажите название для нового товара")
+    await query.message.answer(text="Пожалуйста, укажите название для нового товара.")
     await state.set_state(user_states.waiting_for_name)  # Переводим стейт в ожидание названия
     
 
 @rt.message(user_states.waiting_for_name)
 async def add_name(message: Message, state: FSMContext):
-    item_name = message.text
-    bot_db.insert_name(item_name)
-    await message.answer(text=f"Отлично! Теперь укажите описание к товару.")
-    await state.set_state(user_states.waiting_for_description)
+    #Очищаем полученную строку от спец.символов, двойные пробелы заменяем на одинарные
+    pattern = "([А-Яа-яA-Za-z]+(?:\s[А-Яа-яA-Za-z0-9]+)*)"
+    match = re.search(pattern,message.text)
+    if match:
+        cleaned_string = re.sub(r'[^a-zA-ZА-Яа-я0-9 ]+', '', message.text).strip()
+        cleaned_string = re.sub(r'\s+', ' ', cleaned_string)
+        if len(cleaned_string)>=4: #Проверка на длину уже очищенной строки
+            bot_db.insert_name(cleaned_string)
+            await message.answer(text=f"Отлично! Теперь укажите описание к товару.")
+            await state.set_state(user_states.waiting_for_description)
+        else:
+            await message.answer(text = "Кажется, длина названия меньше 4 символов. Минимальная длина 4 символа")
+    else:
+        await message.answer(text = "Похоже название товара не соответствует требованиям. Введите, пожалуйста корректное название.")
 
 @rt.message(user_states.waiting_for_description)
 async def add_description(message: Message, state: FSMContext):
@@ -109,23 +121,37 @@ async def add_description(message: Message, state: FSMContext):
 
 @rt.message(user_states.waiting_for_price)
 async def add_price(message: Message, state: FSMContext):
-    bot_db.insert_price(message.text)
-    await message.answer(text="Теперь укажите количество товара в наличии.")
-    await state.set_state(user_states.waiting_for_amount)
+    pattern = "^\d+$"
+
+    if re.match(pattern, message.text):
+        bot_db.insert_price(message.text)
+        await message.answer(text="Теперь укажите количество товара в наличии.")
+        await state.set_state(user_states.waiting_for_amount)
+    else:
+        await message.answer(text = "Введенное вами значение не является целым числом. Укажите целое число.")
 
 @rt.message(user_states.waiting_for_amount)
 async def add_amount(message: Message, state: FSMContext):
-    bot_db.insert_amount(message.text)
-    await message.answer(text="Теперь отправьте фото товара")
-    await state.set_state(user_states.waiting_for_picture)
+    pattern = "^\d+$"
+    if re.match(pattern, message.text):
+
+        bot_db.insert_amount(message.text)
+        await message.answer(text="Теперь отправьте фото товара")
+        await state.set_state(user_states.waiting_for_picture)
+    else:
+        await message.answer(text = "Введенное вами значение не является целым числом. Укажите целое число.")
 
 
 @rt.message(user_states.waiting_for_picture)
-async def waiting_for_picture(message:Message, state: FSMContext):
-    picture = message.photo[-1].file_id
-    bot_db.insert_picture(picture)
-    await message.answer(text= "Новый товар был успешно создан")
-    await state.clear()
+async def add_picture(message:Message, state: FSMContext):
+    try:
+        picture = message.photo[-1].file_id
+        bot_db.insert_picture(picture)
+        await message.answer(text= "Новый товар был успешно создан", reply_markup= kb.seller_role_menu)
+        await state.clear()
+    except:
+        await message.answer(text = "Это не фотография. Отправьте фотографию.")
+    
 
 
 @rt.callback_query(F.data == "plug")

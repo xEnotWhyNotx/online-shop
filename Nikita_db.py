@@ -1,7 +1,7 @@
 import sqlite3
 import csv
 class BotDB:
-    
+    actual_id = int()
     def __init__(self, db_file):
         #Инициализация соединения с бд
         self.conn = sqlite3.connect(db_file)
@@ -145,3 +145,7 @@ class BotDB:
         except Exception as e:
             print(f"Произошла ошибка при создании CSV файла: {e}")
             return None
+    
+    def insert_picture(self, picture):
+        self.cursor.execute('''UPDATE Items set Picture = ? where item_id = (?)''', (picture, actual_id))
+        self.conn.commit()

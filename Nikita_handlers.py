@@ -15,6 +15,7 @@ bot_db = BotDB('online-shop_V2_1.db')
 
 
 
+
 @rt.message(Command("start"))
 async def start_handler(msg: Message, state:FSMContext):
     user_id = msg.from_user.id
@@ -90,7 +91,6 @@ async def create_item(query:types.CallbackQuery, state:FSMContext):
     #Инициализация создания новой карточки товара#
     new_id = bot_db.create_new_item()
     await query.message.answer(text="Пожалуйста, укажите название для нового товара")
-    #await state.set("new_item_id", new_id)  # Сохраняем id созданного товара в состоянии
     await state.set_state(user_states.waiting_for_name)  # Переводим стейт в ожидание названия
     
 
@@ -116,8 +116,17 @@ async def add_price(message: Message, state: FSMContext):
 @rt.message(user_states.waiting_for_amount)
 async def add_amount(message: Message, state: FSMContext):
     bot_db.insert_amount(message.text)
-    await message.answer(text="Новый товар успешно создан!")
+    await message.answer(text="Теперь отправьте фото товара")
+    await state.set_state(user_states.waiting_for_picture)
+
+
+@rt.message(user_states.waiting_for_picture)
+async def waiting_for_picture(message:Message, state: FSMContext):
+    picture = message.photo[-1].file_id
+    bot_db.insert_picture(picture)
+    await message.answer(text= "Новый товар был успешно создан")
     await state.clear()
+
 
 @rt.callback_query(F.data == "plug")
 async def plug(query:CallbackQuery):

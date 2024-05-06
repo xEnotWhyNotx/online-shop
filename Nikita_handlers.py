@@ -38,24 +38,27 @@ async def start_handler(msg: Message, state:FSMContext):
             await msg.answer(text = f"Вы авторизованы как администратор. С возвращением, {name}", reply_markup=kb.admin_role_menu)
         elif user_role == (None,):
             await msg.answer(text = f"Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
-            await state.set_state(user_states.waiting_for_users_role)
+              
+
     else:
         bot_db.create_new_user(user_id)
         await msg.answer(text = f"Кажется, вы у нас впервые. Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
-        await state.set_state(user_states.waiting_for_users_role)
+          
+        
 
 
-@rt.message(user_states.waiting_for_users_role)
-async def add_role(message: Message, state: FSMContext):
-    user_id = message.from_user.id
-    if message.text == "Продавец":
+@rt.callback_query(F.data.in_(["user_is_seller","user_is_customer"]))
+async def add_role(query: types.CallbackQuery, state: FSMContext):
+    user_id = query.from_user.id
+    bot_db = BotDB('online-shop_V2_1.db')
+    if bot_db.get_role(user_id) != (None,):
+        await query.answer(text = "Вы уже выбрали роль. Сменить роль можно через главное меню")
+    elif F.data == "user_is_seller":
         bot_db.insert_seller(user_id)
-        await message.answer(text=f"Вы были успешно добавлены как продавец. Для продолжения введите команду /start")
-        await state.clear()
-    elif message.text == "Покупатель":
+        await query.answer(text=f"Вы были успешно добавлены как продавец. Для продолжения введите команду /start")
+    elif F.data == "user_is_customer":
         bot_db.insert_customer(user_id)
-        await message.answer(text=f"Вы были успешно добавлены как покупатель. Для продолжения введите команду /start")
-        await state.clear()
+        await query.answer(text=f"Вы были успешно добавлены как покупатель. Для продолжения введите команду /start")
 
 @rt.callback_query(F.data == "get_all_orders")
 async def get_orders(query: types.CallbackQuery):

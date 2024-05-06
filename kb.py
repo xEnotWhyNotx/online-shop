@@ -14,11 +14,11 @@ from aiogram import types
 
 
 select_role_button = [[
-    KeyboardButton(text="Покупатель"),
-    KeyboardButton(text="Продавец", )
+    InlineKeyboardButton(text="Покупатель", callback_data="user_is_customer"),
+    InlineKeyboardButton(text="Продавец", callback_data= "user_is_seller")
                     ]]
                     
-select_role_menu = ReplyKeyboardMarkup(keyboard = select_role_button, resize_keyboard = True, one_time_keyboard=True)
+select_role_menu = InlineKeyboardMarkup(inline_keyboard = select_role_button)
 
 admin_role_button = [
      [InlineKeyboardButton(text="Получить список всех пользователей", callback_data="get_users")],

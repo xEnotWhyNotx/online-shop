@@ -42,6 +42,7 @@ customer_role_button = [
      [InlineKeyboardButton(text="Указать интересующий товар вручную", callback_data = "plug")],
      [InlineKeyboardButton(text="Найти товар через конфигуратор", callback_data = "plug")],
      [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="switch_user_role_to_seller")],
+     [InlineKeyboardButton(text="Отобразить мои заказы", callback_data= "get_this_customer_orders")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
                ]
 

@@ -155,3 +155,21 @@ class BotDB:
     def insert_shop_description(self, text, Telegram_id):
         self.cursor.execute('''UPDATE Seller set Description = ? where Seller_Telegram_id = (?)''', (text, Telegram_id))
         self.conn.commit()
+    
+    def get_customer_orders(self, user_id):
+        #Формируем csv файл со списком заказов данного продавца#
+        csv_file = f"order_list_for_this_customer_{user_id}.csv"
+        try:
+            order_list_for_this_seller = self.cursor.execute("SELECT * from Orders where Customer_Telegram_id = ?", (user_id, )).fetchall()
+        
+            with open(csv_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow([description[0] for description in self.cursor.description])
+                writer.writerows(order_list_for_this_seller)
+   
+            return csv_file
+        
+        except Exception as e:
+            print(f"Произошла ошибка при создании CSV файла: {e}")
+            return None
+    

@@ -211,18 +211,41 @@ async def get_customer_orders(query: types.CallbackQuery):
 
 @rt.callback_query(F.data == "show_all_items")
 async def show_all_items(query: types.CallbackQuery):
-    user_id = query.from_user.id
     items = bot_db.show_all_item()
-    print(items)
+#    print(items)
     
     for item in items:
-    #    await send_message(item)
-        await query.message.answer(str(item))
+        id = item[0]
+        Name = item[1]
+        Description = item[2]
+        Price = item[3]
+        Amount = item[4]
+        picture = item[5]
+        if picture == None:
+
+            Card = str(
+                f'Id товара: {id}\n'
+                f'Наименование: {Name}\n'
+                f'Описание: {Description}\n'
+                f'Цена в рублях: {Price}\n'
+                f'В наличии: {Amount}\n'
+            )
+            await query.message.answer(Card)
+            await query.answer()
+        else:
+            Card = str(
+                f"{'<b>'}Id товара:{'</b>'} {'<code>'}{id}{'</code>'}\n"
+                f"{'<b>'}Наименование:{'</b>'} {Name}\n"
+                f"{'<b>'}Описание:{'</b>'} {Description}\n"
+                f"{'<b>'}Цена в рублях:{'</b>'} {Price}\n"
+                f"{'<b>'}В наличии:{'</b>'} {Amount}\n"
+            )
+            await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
+            await query.answer()
+    await query.message.answer("Пожалуйста, введите артикул товара, который вы хотите добавить в корзину.")
 
 
 
-# async def send_message(item):
-#     asyncio.run(send_message(item))
 
 #Обработчик для вывода информации о товарах
 

@@ -1,0 +1,2 @@
+class WrongItemException(Exception):
+    pass

@@ -10,6 +10,7 @@ from States import user_states
 from aiogram.fsm.context import FSMContext
 import re
 import asyncio
+from Exceptions import WrongItemException
 
 rt = Router()
 bot_db = BotDB('online-shop_V2_1.db')
@@ -210,7 +211,7 @@ async def get_customer_orders(query: types.CallbackQuery):
         await query.answer()
 
 @rt.callback_query(F.data == "show_all_items")
-async def show_all_items(query: types.CallbackQuery):
+async def show_all_items(query: types.CallbackQuery, state:FSMContext):
     items = bot_db.show_all_item()
 #    print(items)
     
@@ -243,11 +244,18 @@ async def show_all_items(query: types.CallbackQuery):
             await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
             await query.answer()
     await query.message.answer("Пожалуйста, введите артикул товара, который вы хотите добавить в корзину.")
+    await state.set_state(user_states.waiting_for_item_pick)
+    
+@rt.message(user_states.waiting_for_item_pick)
+async def add_item_to_cart(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    item = message.text
+    try:
+        bot_db.add_item_to_cart(user_id,item)
+        await message.answer(text = "Товар был успешно добавлен в корзину")
+        await state.clear()
+    except (WrongItemException):
+        await message.answer(text = "Похоже, вы указали id несуществующего товара. Либо указанный товар уже есть в вашей корзине.")
 
 
 
-
-#Обработчик для вывода информации о товарах
-
-#@rt.message()
-#Обработчик для добавления введенного пользователем артикула в корзину

@@ -1,5 +1,6 @@
 import sqlite3
 import csv
+from Exceptions import WrongItemException
 class BotDB:
     actual_id = int()
     
@@ -176,3 +177,11 @@ class BotDB:
     def show_all_item(self):
        result = self.cursor.execute('''Select * from items''').fetchall()
        return result
+
+    def add_item_to_cart(self, user_id, item):
+        print(item)
+        if self.cursor.execute('''select Item_id from Items where Item_id = (?)''', (item,)).fetchone()!= None and self.cursor.execute('''select Item_id from Favorite_Cart where Item_id = (?) and Telegram_id = (?)''', (item,user_id)).fetchone()== None:
+            self.cursor.execute('''INSERT INTO Favorite_Cart (Item_id, Telegram_id, Item_location) VALUES (?, ?, ?)''', (item, user_id, "Cart"))
+            self.conn.commit()
+        else:
+            raise WrongItemException

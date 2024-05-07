@@ -39,6 +39,7 @@ seller_role_button = [
 seller_role_menu = InlineKeyboardMarkup(inline_keyboard=seller_role_button)
 
 customer_role_button = [
+     [InlineKeyboardButton(text= "Все товары", callback_data = "show_all_items")],
      [InlineKeyboardButton(text="Указать интересующий товар вручную", callback_data = "plug")],
      [InlineKeyboardButton(text="Найти товар через конфигуратор", callback_data = "plug")],
      [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="switch_user_role_to_seller")],

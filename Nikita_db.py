@@ -173,3 +173,6 @@ class BotDB:
             print(f"Произошла ошибка при создании CSV файла: {e}")
             return None
     
+    def show_all_item(self):
+       result = self.cursor.execute('''Select * from items''').fetchall()
+       return result

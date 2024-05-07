@@ -9,6 +9,7 @@ import aiofiles
 from States import user_states
 from aiogram.fsm.context import FSMContext
 import re
+import asyncio
 
 rt = Router()
 bot_db = BotDB('online-shop_V2_1.db')
@@ -207,3 +208,23 @@ async def get_customer_orders(query: types.CallbackQuery):
         print(f"Произошла ошибка при отправке файла: {e}")
         await query.message.answer(text="Произошла ошибка при отправке файла")
         await query.answer()
+
+@rt.callback_query(F.data == "show_all_items")
+async def show_all_items(query: types.CallbackQuery):
+    user_id = query.from_user.id
+    items = bot_db.show_all_item()
+    print(items)
+    
+    for item in items:
+    #    await send_message(item)
+        await query.message.answer(str(item))
+
+
+
+# async def send_message(item):
+#     asyncio.run(send_message(item))
+
+#Обработчик для вывода информации о товарах
+
+#@rt.message()
+#Обработчик для добавления введенного пользователем артикула в корзину

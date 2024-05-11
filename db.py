@@ -1,6 +1,8 @@
 import sqlite3
 import csv
 from Exceptions import WrongItemException
+
+
 class BotDB:
     actual_id = int()
     

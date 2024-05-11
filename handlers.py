@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery, InputFile
 import kb
 import text
 import csv
-from Nikita_db import BotDB
+from db import BotDB
 import aiofiles
 from States import user_states
 from aiogram.fsm.context import FSMContext

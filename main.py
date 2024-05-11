@@ -5,7 +5,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 #Закоменитровал, так как у меня нет handlers, только Nikita_handlers
 #from handlers import router 
-from Nikita_handlers import rt
+from handlers import rt
 from config import token
 
 

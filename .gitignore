@@ -3,6 +3,7 @@ venv/
 .idea/
 *.pyc
 __pycache__/
+.vscode/
 *.log
 *.db
 *.sqlite3

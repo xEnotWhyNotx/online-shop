@@ -9,5 +9,6 @@ class user_states(StatesGroup):
     waiting_for_users_role = State()
     waiting_for_item_pick = State()
     waiting_for_product_search = State()
+    waiting_for_promocode = State()
     
 

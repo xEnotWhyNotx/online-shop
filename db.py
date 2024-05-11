@@ -191,3 +191,22 @@ class BotDB:
     def get_product_by_name(self, name):
         self.cursor.execute("SELECT * FROM Items WHERE Name LIKE ?", ('%' + name + '%',))
         return self.cursor.fetchall()
+    
+    def insert_promocode(self, promocode, discount):
+        # Проверяем, есть ли записи с таким же значением discount
+        self.cursor.execute("SELECT * FROM Promo WHERE discount = ?", (discount,))
+        existing_records = self.cursor.fetchall()
+
+        if existing_records:
+            # Если есть, удаляем их
+            self.cursor.execute("DELETE FROM Promo WHERE discount = ?", (discount,))
+            self.conn.commit()
+
+        # Записываем новый промокод и скидку
+        self.cursor.execute("INSERT INTO Promo (promocode, discount) VALUES (?, ?)", (promocode, discount))
+        self.conn.commit()
+
+    def check_promocode(self, promocode):
+        result = self.cursor.execute("SELECT * FROM Promo WHERE promocode = ?", (promocode,)).fetchone()
+        return bool(result)
+

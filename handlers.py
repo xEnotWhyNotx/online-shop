@@ -11,6 +11,9 @@ from aiogram.fsm.context import FSMContext
 import re
 import asyncio
 from Exceptions import WrongItemException
+import random
+import string
+
 
 rt = Router()
 bot_db = BotDB('online-shop_V2_1.db')
@@ -266,3 +269,45 @@ async def add_item_to_cart(message: Message, state: FSMContext):
         await state.clear()
     except (WrongItemException):
         await message.answer(text = "Похоже, вы указали id несуществующего товара. Либо указанный товар уже есть в вашей корзине.")
+
+@rt.callback_query(F.data == "enter_promocode")
+async def enter_promocode(query: types.CallbackQuery, state: FSMContext):
+    await query.message.answer("Введите промокод:")
+    await state.set_state(user_states.waiting_for_promocode)
+
+@rt.message(user_states.waiting_for_promocode)
+async def process_promocode(message: Message, state: FSMContext):
+    promocode = message.text.upper()
+    if bot_db.check_promocode(promocode):
+        await message.answer("Промокод принят!")
+        # Действия при успешной проверке промокода
+    else:
+        await message.answer("Промокод не действителен.")
+    await state.clear()
+
+
+@rt.callback_query(F.data == "create_promocode")
+async def prompt_discount_selection(query: types.CallbackQuery):
+    # Предложение выбрать процент скидки
+    await query.message.answer("Выберите процент скидки:", reply_markup=kb.seller_dicount_menu)
+
+@rt.callback_query(F.data.startswith("discount_"))
+async def create_promocode(query: types.CallbackQuery):
+    discount_rate = int(query.data.split("_")[1])
+    # Генерация промокода, как описано ранее
+    letters = ''.join(random.choices(string.ascii_uppercase, k=3))
+    numbers = ''.join(random.choices(string.digits, k=5))
+    suffix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    promocode = f"{letters}{numbers}{suffix}"
+    
+    # Сохранение в базу данных с указанием скидки
+    bot_db.insert_promocode(promocode, discount_rate)
+    
+    # Отправка сообщения с промокодом
+    await query.message.answer(f"Создан промокод: {promocode} на {discount_rate}% скидку", reply_markup=kb.seller_role_menu)
+
+@rt.callback_query(F.data == "go_back")
+async def go_back(query: types.CallbackQuery):
+    # Удаляем сообщение с выбором скидки и возвращаемся в меню
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.seller_role_menu)

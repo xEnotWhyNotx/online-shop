@@ -294,3 +294,9 @@ async def add_item_to_cart(message: Message, state: FSMContext):
 
 
 
+
+@router.message(F.text == "Меню")
+@router.message(F.text == "Выйти в меню")
+@router.message(F.text == "◀️ Выйти в меню")
+async def menu(msg: Message):
+    await msg.answer(text.menu, reply_markup=kb.menu)

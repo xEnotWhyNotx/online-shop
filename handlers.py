@@ -16,10 +16,6 @@ rt = Router()
 bot_db = BotDB('online-shop_V2_1.db')
 
 
-
-
-
-
 @rt.message(Command("start"))
 async def start_handler(msg: Message, state:FSMContext):
     user_id = msg.from_user.id
@@ -130,21 +126,6 @@ async def add_description(message: Message, state: FSMContext):
     await message.answer(text=f"Теперь укажите цену товара.")
     await state.set_state(user_states.waiting_for_price)
 
-# @rt.message(user_states.waiting_for_product_search)
-# async def search_product(message: Message, state: FSMContext):
-#     product_name = message.text
-#     product = bot_db.get_product_by_name(product_name)
-#     if product:
-#         # Assuming 'product' is a tuple with (id, name, description, price, amount, picture)
-#         response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
-#         if product[5]:
-#             await message.answer_photo(photo=product[5], caption=response)
-#         else:
-#             await message.answer(response)
-#     else:
-#         await message.answer("Товар не найден.")
-#     await state.clear()
-
 @rt.message(user_states.waiting_for_product_search)
 async def search_product(message: Message, state: FSMContext):
     product_name = message.text
@@ -183,7 +164,6 @@ async def add_amount(message: Message, state: FSMContext):
     else:
         await message.answer(text = "Введенное вами значение не является целым числом. Укажите целое число.")
 
-
 @rt.message(user_states.waiting_for_picture)
 async def add_picture(message:Message, state: FSMContext):
     try:
@@ -193,13 +173,10 @@ async def add_picture(message:Message, state: FSMContext):
         await state.clear()
     except:
         await message.answer(text = "Это не фотография. Отправьте фотографию.")
-    
-
 
 @rt.callback_query(F.data == "plug")
 async def plug(query:CallbackQuery):
     await query.answer(text = "Данный функционал еще не реализован, однако мы уже работаем над ним")
-
 
 @rt.callback_query(F.data == "switch_user_role_to_seller")
 async def switch_user_role_to_seller(query:CallbackQuery):
@@ -248,8 +225,6 @@ async def get_customer_orders(query: types.CallbackQuery):
 @rt.callback_query(F.data == "show_all_items")
 async def show_all_items(query: types.CallbackQuery, state:FSMContext):
     items = bot_db.show_all_item()
-#    print(items)
-    
     for item in items:
         id = item[0]
         Name = item[1]
@@ -291,12 +266,3 @@ async def add_item_to_cart(message: Message, state: FSMContext):
         await state.clear()
     except (WrongItemException):
         await message.answer(text = "Похоже, вы указали id несуществующего товара. Либо указанный товар уже есть в вашей корзине.")
-
-
-
-
-@router.message(F.text == "Меню")
-@router.message(F.text == "Выйти в меню")
-@router.message(F.text == "◀️ Выйти в меню")
-async def menu(msg: Message):
-    await msg.answer(text.menu, reply_markup=kb.menu)

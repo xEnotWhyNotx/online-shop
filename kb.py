@@ -2,13 +2,6 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
     ReplyKeyboardRemove
 from aiogram import types
 
-def search_by_name_menu():
-    markup = InlineKeyboardMarkup()
-    button = InlineKeyboardButton(text="Поиск по названию", callback_data="search_by_name")
-    markup.add(button)
-    return markup
-
-
 
 select_role_button = [[
     InlineKeyboardButton(text="Покупатель", callback_data="user_is_customer"),
@@ -47,12 +40,3 @@ customer_role_button = [
                ]
 
 customer_role_menu = InlineKeyboardMarkup(inline_keyboard=customer_role_button)
-
-
-#admin_menu = [InlineKeyboardButton(text="Получить список пользователей", callback_data="get_users")]
-
-#admin_menu = InlineKeyboardMarkup(inline_keyboard= admin_menu)
-
-exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти в меню")]], resize_keyboard=True)
-iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
-

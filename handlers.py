@@ -130,19 +130,35 @@ async def add_description(message: Message, state: FSMContext):
     await message.answer(text=f"Теперь укажите цену товара.")
     await state.set_state(user_states.waiting_for_price)
 
+# @rt.message(user_states.waiting_for_product_search)
+# async def search_product(message: Message, state: FSMContext):
+#     product_name = message.text
+#     product = bot_db.get_product_by_name(product_name)
+#     if product:
+#         # Assuming 'product' is a tuple with (id, name, description, price, amount, picture)
+#         response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
+#         if product[5]:
+#             await message.answer_photo(photo=product[5], caption=response)
+#         else:
+#             await message.answer(response)
+#     else:
+#         await message.answer("Товар не найден.")
+#     await state.clear()
+
 @rt.message(user_states.waiting_for_product_search)
 async def search_product(message: Message, state: FSMContext):
     product_name = message.text
-    product = bot_db.get_product_by_name(product_name)
-    if product:
-        # Assuming 'product' is a tuple with (id, name, description, price, amount, picture)
-        response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
-        if product[5]:  # if there's a picture
-            await message.answer_photo(photo=product[5], caption=response)
+    products = bot_db.get_product_by_name(product_name)
+    print(products)
+    for product in products:
+        if product:
+            response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
+            if product[5]:
+                await message.answer_photo(photo=product[5], caption=response)
+            else:
+                await message.answer(response)
         else:
-            await message.answer(response)
-    else:
-        await message.answer("Товар не найден.")
+            await message.answer("Товар не найден.")
     await state.clear()
 
 @rt.message(user_states.waiting_for_price)
@@ -260,7 +276,7 @@ async def show_all_items(query: types.CallbackQuery, state:FSMContext):
                 f"{'<b>'}Цена в рублях:{'</b>'} {Price}\n"
                 f"{'<b>'}В наличии:{'</b>'} {Amount}\n"
             )
-            # await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
+            await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
             await query.answer()
     await query.message.answer("Пожалуйста, введите артикул товара, который вы хотите добавить в корзину.")
     await state.set_state(user_states.waiting_for_item_pick)

@@ -11,28 +11,6 @@ class BotDB:
         self.conn = sqlite3.connect(db_file)
         self.cursor = self.conn.cursor()
 
-    def users_list(self):
-        #Получение списка пользователей из БД
-        csv_file = 'users_list.csv'
-        users_list = self.cursor.execute("SELECT * from users")
-        rows = users_list.fetchall()
-        print("Данные были получены, вот они", rows)
-    
-        try:
-            users_list = self.cursor.execute("SELECT * from users")
-            rows = users_list.fetchall()
-        
-            with open(csv_file, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow([description[0] for description in self.cursor.description])
-                writer.writerows(rows)
-   
-            return csv_file
-        
-        except Exception as e:
-            print(f"Произошла ошибка при создании CSV файла: {e}")
-            return None
-
     
     def is_user_in_db(self, user_id):
         query = self.cursor.execute("Select Telegram_id from Users where Telegram_id = ?", (user_id,)).fetchone()
@@ -59,12 +37,14 @@ class BotDB:
         print(role)
         return role
     
-    
     def users_list(self):
         #Получение списка пользователей из БД
         csv_file = 'users_list.csv'
+        users_list = self.cursor.execute("SELECT * from users")
+        rows = users_list.fetchall()
+    
         try:
-            users_list = self.cursor.execute("SELECT * from Users")
+            users_list = self.cursor.execute("SELECT * from users")
             rows = users_list.fetchall()
         
             with open(csv_file, mode='w', newline='') as file:
@@ -134,6 +114,10 @@ class BotDB:
         self.cursor.execute('''UPDATE Users set role = ? where Telegram_id = (?)''', ("Customer", user_id) )
         self.conn.commit()
 
+    def switch_user_role_to_admin(self, user_id):
+        self.cursor.execute('''UPDATE Users set role = ? where Telegram_id = (?)''', ("Administrator", user_id) )
+        self.conn.commit()
+
     def get_seller_orders(self, user_id):
         #Формируем csv файл со списком заказов данного продавца#
         csv_file = f"order_list_for_this_seller_{user_id}.csv"
@@ -189,5 +173,24 @@ class BotDB:
             raise WrongItemException
         
     def get_product_by_name(self, name):
-        self.cursor.execute("SELECT * FROM Items WHERE Name LIKE ?", (name,))
-        return self.cursor.fetchone()
+        self.cursor.execute("SELECT * FROM Items WHERE Name LIKE ?", ('%' + name + '%',))
+        return self.cursor.fetchall()
+    
+    def insert_promocode(self, promocode, discount):
+        # Проверяем, есть ли записи с таким же значением discount
+        self.cursor.execute("SELECT * FROM Promo WHERE discount = ?", (discount,))
+        existing_records = self.cursor.fetchall()
+
+        if existing_records:
+            # Если есть, удаляем их
+            self.cursor.execute("DELETE FROM Promo WHERE discount = ?", (discount,))
+            self.conn.commit()
+
+        # Записываем новый промокод и скидку
+        self.cursor.execute("INSERT INTO Promo (promocode, discount) VALUES (?, ?)", (promocode, discount))
+        self.conn.commit()
+
+    def check_promocode(self, promocode):
+        result = self.cursor.execute("SELECT * FROM Promo WHERE promocode = ?", (promocode,)).fetchone()
+        return bool(result)
+

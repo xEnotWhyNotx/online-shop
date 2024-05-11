@@ -3,9 +3,14 @@ venv/
 .idea/
 *.pyc
 __pycache__/
+.vscode/
 *.log
 *.db
 *.sqlite3
 token1.py
 config.py
 online-shop_V2_1.db
+order_list*
+docker-compose.yml
+.env
+users_list.csv

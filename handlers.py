@@ -11,12 +11,24 @@ from aiogram.fsm.context import FSMContext
 import re
 import asyncio
 from Exceptions import WrongItemException
+import random
+import string
+import hashlib
+import os
+from config import PASSWORD, ADMIN_PASSWORD, ALLOWED_ADMIN_IDS, DATABASE
+
+
+# PASSWORD = os.getenv('PASSWORD')
+# ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+# DATABASE = os.getenv('DATABASE')
+
+
 
 rt = Router()
-bot_db = BotDB('online-shop_V2_1.db')
+bot_db = BotDB(DATABASE)
 
-
-
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 
@@ -24,7 +36,7 @@ bot_db = BotDB('online-shop_V2_1.db')
 async def start_handler(msg: Message, state:FSMContext):
     user_id = msg.from_user.id
     name= msg.from_user.full_name
-    bot_db = BotDB('online-shop_V2_1.db')
+    # bot_db = BotDB(DATABASE)
     if bot_db.is_user_in_db(user_id):
 
         user_role = bot_db.get_role(user_id)
@@ -34,7 +46,6 @@ async def start_handler(msg: Message, state:FSMContext):
         
         elif user_role == ('Customer',):
             await msg.answer(text = f"Вы авторизованы как покупатель. С возвращением, {name}", reply_markup=kb.customer_role_menu)
-
         
         elif user_role == ('Administrator',):
             await msg.answer(text = f"Вы авторизованы как администратор. С возвращением, {name}", reply_markup=kb.admin_role_menu)
@@ -45,14 +56,12 @@ async def start_handler(msg: Message, state:FSMContext):
     else:
         bot_db.create_new_user(user_id)
         await msg.answer(text = f"Кажется, вы у нас впервые. Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
-          
-        
 
 
 @rt.callback_query(F.data.in_(["user_is_seller","user_is_customer"]))
 async def add_role(query: types.CallbackQuery, state: FSMContext):
     user_id = query.from_user.id
-    bot_db = BotDB('online-shop_V2_1.db')
+    # bot_db = BotDB(DATABASE)
     if bot_db.get_role(user_id) != (None,):
         await query.answer(text = "Вы уже выбрали роль. Сменить роль можно через главное меню")
     elif F.data == "user_is_seller":
@@ -133,16 +142,17 @@ async def add_description(message: Message, state: FSMContext):
 @rt.message(user_states.waiting_for_product_search)
 async def search_product(message: Message, state: FSMContext):
     product_name = message.text
-    product = bot_db.get_product_by_name(product_name)
-    if product:
-        # Assuming 'product' is a tuple with (id, name, description, price, amount, picture)
-        response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
-        if product[5]:  # if there's a picture
-            await message.answer_photo(photo=product[5], caption=response)
+    products = bot_db.get_product_by_name(product_name)
+    print(products)
+    for product in products:
+        if product:
+            response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
+            if product[5]:
+                await message.answer_photo(photo=product[5], caption=response)
+            else:
+                await message.answer(response)
         else:
-            await message.answer(response)
-    else:
-        await message.answer("Товар не найден.")
+            await message.answer("Товар не найден.")
     await state.clear()
 
 @rt.message(user_states.waiting_for_price)
@@ -167,7 +177,6 @@ async def add_amount(message: Message, state: FSMContext):
     else:
         await message.answer(text = "Введенное вами значение не является целым числом. Укажите целое число.")
 
-
 @rt.message(user_states.waiting_for_picture)
 async def add_picture(message:Message, state: FSMContext):
     try:
@@ -177,25 +186,17 @@ async def add_picture(message:Message, state: FSMContext):
         await state.clear()
     except:
         await message.answer(text = "Это не фотография. Отправьте фотографию.")
-    
-
 
 @rt.callback_query(F.data == "plug")
 async def plug(query:CallbackQuery):
     await query.answer(text = "Данный функционал еще не реализован, однако мы уже работаем над ним")
 
-
-@rt.callback_query(F.data == "switch_user_role_to_seller")
-async def switch_user_role_to_seller(query:CallbackQuery):
-    user_id = query.from_user.id
-    bot_db.switch_user_role_to_seller(user_id)
-    await query.answer(text = f"Вы успешно сменили роль на продавца. Чтобы открыть новое меню, введите команду /start")
-
 @rt.callback_query(F.data == "switch_user_role_to_customer")
 async def switch_user_role_to_customer(query:CallbackQuery):
     user_id = query.from_user.id
     bot_db.switch_user_role_to_customer(user_id)
-    await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")
+    # await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")
+    await query.message.answer("Вы авторизованы как покупатель.", reply_markup=kb.customer_role_menu)
 
 @rt.callback_query(F.data == "get_this_seller_orders")
 async def get_seller_orders(query: types.CallbackQuery):
@@ -232,8 +233,6 @@ async def get_customer_orders(query: types.CallbackQuery):
 @rt.callback_query(F.data == "show_all_items")
 async def show_all_items(query: types.CallbackQuery, state:FSMContext):
     items = bot_db.show_all_item()
-#    print(items)
-    
     for item in items:
         id = item[0]
         Name = item[1]
@@ -260,7 +259,7 @@ async def show_all_items(query: types.CallbackQuery, state:FSMContext):
                 f"{'<b>'}Цена в рублях:{'</b>'} {Price}\n"
                 f"{'<b>'}В наличии:{'</b>'} {Amount}\n"
             )
-            # await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
+            await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
             await query.answer()
     await query.message.answer("Пожалуйста, введите артикул товара, который вы хотите добавить в корзину.")
     await state.set_state(user_states.waiting_for_item_pick)
@@ -276,11 +275,92 @@ async def add_item_to_cart(message: Message, state: FSMContext):
     except (WrongItemException):
         await message.answer(text = "Похоже, вы указали id несуществующего товара. Либо указанный товар уже есть в вашей корзине.")
 
+@rt.callback_query(F.data == "enter_promocode")
+async def enter_promocode(query: types.CallbackQuery, state: FSMContext):
+    await query.message.answer("Введите промокод:")
+    await state.set_state(user_states.waiting_for_promocode)
+
+@rt.message(user_states.waiting_for_promocode)
+async def process_promocode(message: Message, state: FSMContext):
+    promocode = message.text.upper()
+    if bot_db.check_promocode(promocode):
+        await message.answer("Промокод принят!")
+        # Действия при успешной проверке промокода
+    else:
+        await message.answer("Промокод не действителен.")
+    await state.clear()
+
+
+@rt.callback_query(F.data == "create_promocode")
+async def prompt_discount_selection(query: types.CallbackQuery):
+    # Предложение выбрать процент скидки
+    await query.message.answer("Выберите процент скидки:", reply_markup=kb.seller_dicount_menu)
+
+@rt.callback_query(F.data.startswith("discount_"))
+async def create_promocode(query: types.CallbackQuery):
+    discount_rate = int(query.data.split("_")[1])
+    # Генерация промокода, как описано ранее
+    letters = ''.join(random.choices(string.ascii_uppercase, k=3))
+    numbers = ''.join(random.choices(string.digits, k=5))
+    suffix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    promocode = f"{letters}{numbers}{suffix}"
+    
+    # Сохранение в базу данных с указанием скидки
+    bot_db.insert_promocode(promocode, discount_rate)
+    
+    # Отправка сообщения с промокодом
+    await query.message.answer(f"Создан промокод: {promocode} на {discount_rate}% скидку", reply_markup=kb.seller_role_menu)
+
+@rt.callback_query(F.data == "go_back")
+async def go_back(query: types.CallbackQuery):
+    # Удаляем сообщение с выбором скидки и возвращаемся в меню
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.seller_role_menu)
 
 
 
-@router.message(F.text == "Меню")
-@router.message(F.text == "Выйти в меню")
-@router.message(F.text == "◀️ Выйти в меню")
-async def menu(msg: Message):
-    await msg.answer(text.menu, reply_markup=kb.menu)
+@rt.callback_query(F.data == "request_role_change_to_seller")
+async def request_role_change_to_seller(query: types.CallbackQuery, state: FSMContext):
+    await query.message.answer("Введите пароль:", reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state(user_states.waiting_for_role_change_password)
+
+@rt.message(user_states.waiting_for_role_change_password)
+async def process_role_change_password(message: Message, state: FSMContext):
+    if hash_password(message.text) == PASSWORD:
+        user_id = message.from_user.id
+        bot_db.switch_user_role_to_seller(user_id)
+        await message.answer("Роль успешно изменена на продавца.", reply_markup=kb.seller_role_menu)
+        await state.clear()
+    else:
+        await message.answer("Неверный пароль, повторите ввод", reply_markup=kb.back_button_menu)
+
+@rt.callback_query(F.data == "go_back_customer")
+async def go_back_customer(query: types.CallbackQuery):
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.customer_role_menu)
+
+@rt.message(Command("admin"))
+async def admin_login_request(msg: Message, state: FSMContext):
+    user_id = msg.from_user.id
+    if user_id in ALLOWED_ADMIN_IDS:
+        await msg.answer("Введите административный пароль:", reply_markup=kb.back_to_menu)
+        await state.set_state(user_states.waiting_for_admin_password)
+    else:
+        return  # Если пользователь не в списке, игнорируем команду
+
+@rt.message(user_states.waiting_for_admin_password)
+async def process_admin_login(message: Message, state: FSMContext):
+    if hash_password(message.text) == ADMIN_PASSWORD:
+        user_id = message.from_user.id
+        bot_db.switch_user_role_to_admin(user_id)
+        await message.answer("Вы успешно вошли как администратор.")
+        await start_handler(message, state)  # Вызываем обработчик /start для показа меню администратора
+        await state.clear()
+    else:
+        await message.answer("Неверный пароль. Повторите попытку.", reply_markup=kb.back_to_menu)
+        await state.set_state(user_states.waiting_for_admin_password)  # Позволяем пользователю повторно ввести пароль
+
+@rt.callback_query(F.data == "go_back_latest")
+async def go_back(query: types.CallbackQuery):
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.customer_role_menu)

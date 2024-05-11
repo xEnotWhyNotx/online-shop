@@ -13,17 +13,30 @@ import asyncio
 from Exceptions import WrongItemException
 import random
 import string
+import hashlib
+import os
+from config import PASSWORD, ADMIN_PASSWORD, ALLOWED_ADMIN_IDS, DATABASE
+
+
+# PASSWORD = os.getenv('PASSWORD')
+# ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+# DATABASE = os.getenv('DATABASE')
+
 
 
 rt = Router()
-bot_db = BotDB('online-shop_V2_1.db')
+bot_db = BotDB(DATABASE)
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
 
 
 @rt.message(Command("start"))
 async def start_handler(msg: Message, state:FSMContext):
     user_id = msg.from_user.id
     name= msg.from_user.full_name
-    bot_db = BotDB('online-shop_V2_1.db')
+    # bot_db = BotDB(DATABASE)
     if bot_db.is_user_in_db(user_id):
 
         user_role = bot_db.get_role(user_id)
@@ -33,7 +46,6 @@ async def start_handler(msg: Message, state:FSMContext):
         
         elif user_role == ('Customer',):
             await msg.answer(text = f"Вы авторизованы как покупатель. С возвращением, {name}", reply_markup=kb.customer_role_menu)
-
         
         elif user_role == ('Administrator',):
             await msg.answer(text = f"Вы авторизованы как администратор. С возвращением, {name}", reply_markup=kb.admin_role_menu)
@@ -44,14 +56,12 @@ async def start_handler(msg: Message, state:FSMContext):
     else:
         bot_db.create_new_user(user_id)
         await msg.answer(text = f"Кажется, вы у нас впервые. Пожалуйста, выберите роль.", reply_markup= kb.select_role_menu)
-          
-        
 
 
 @rt.callback_query(F.data.in_(["user_is_seller","user_is_customer"]))
 async def add_role(query: types.CallbackQuery, state: FSMContext):
     user_id = query.from_user.id
-    bot_db = BotDB('online-shop_V2_1.db')
+    # bot_db = BotDB(DATABASE)
     if bot_db.get_role(user_id) != (None,):
         await query.answer(text = "Вы уже выбрали роль. Сменить роль можно через главное меню")
     elif F.data == "user_is_seller":
@@ -181,17 +191,12 @@ async def add_picture(message:Message, state: FSMContext):
 async def plug(query:CallbackQuery):
     await query.answer(text = "Данный функционал еще не реализован, однако мы уже работаем над ним")
 
-@rt.callback_query(F.data == "switch_user_role_to_seller")
-async def switch_user_role_to_seller(query:CallbackQuery):
-    user_id = query.from_user.id
-    bot_db.switch_user_role_to_seller(user_id)
-    await query.answer(text = f"Вы успешно сменили роль на продавца. Чтобы открыть новое меню, введите команду /start")
-
 @rt.callback_query(F.data == "switch_user_role_to_customer")
 async def switch_user_role_to_customer(query:CallbackQuery):
     user_id = query.from_user.id
     bot_db.switch_user_role_to_customer(user_id)
-    await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")
+    # await query.answer(text = f"Вы успешно сменили роль на покупателя. Чтобы открыть новое меню, введите команду /start")
+    await query.message.answer("Вы авторизованы как покупатель.", reply_markup=kb.customer_role_menu)
 
 @rt.callback_query(F.data == "get_this_seller_orders")
 async def get_seller_orders(query: types.CallbackQuery):
@@ -311,3 +316,51 @@ async def go_back(query: types.CallbackQuery):
     # Удаляем сообщение с выбором скидки и возвращаемся в меню
     await query.message.delete()
     await query.message.answer("Вы в главном меню.", reply_markup=kb.seller_role_menu)
+
+
+
+@rt.callback_query(F.data == "request_role_change_to_seller")
+async def request_role_change_to_seller(query: types.CallbackQuery, state: FSMContext):
+    await query.message.answer("Введите пароль:", reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state(user_states.waiting_for_role_change_password)
+
+@rt.message(user_states.waiting_for_role_change_password)
+async def process_role_change_password(message: Message, state: FSMContext):
+    if hash_password(message.text) == PASSWORD:
+        user_id = message.from_user.id
+        bot_db.switch_user_role_to_seller(user_id)
+        await message.answer("Роль успешно изменена на продавца.", reply_markup=kb.seller_role_menu)
+        await state.clear()
+    else:
+        await message.answer("Неверный пароль, повторите ввод", reply_markup=kb.back_button_menu)
+
+@rt.callback_query(F.data == "go_back_customer")
+async def go_back_customer(query: types.CallbackQuery):
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.customer_role_menu)
+
+@rt.message(Command("admin"))
+async def admin_login_request(msg: Message, state: FSMContext):
+    user_id = msg.from_user.id
+    if user_id in ALLOWED_ADMIN_IDS:
+        await msg.answer("Введите административный пароль:", reply_markup=kb.back_to_menu)
+        await state.set_state(user_states.waiting_for_admin_password)
+    else:
+        return  # Если пользователь не в списке, игнорируем команду
+
+@rt.message(user_states.waiting_for_admin_password)
+async def process_admin_login(message: Message, state: FSMContext):
+    if hash_password(message.text) == ADMIN_PASSWORD:
+        user_id = message.from_user.id
+        bot_db.switch_user_role_to_admin(user_id)
+        await message.answer("Вы успешно вошли как администратор.")
+        await start_handler(message, state)  # Вызываем обработчик /start для показа меню администратора
+        await state.clear()
+    else:
+        await message.answer("Неверный пароль. Повторите попытку.", reply_markup=kb.back_to_menu)
+        await state.set_state(user_states.waiting_for_admin_password)  # Позволяем пользователю повторно ввести пароль
+
+@rt.callback_query(F.data == "go_back_latest")
+async def go_back(query: types.CallbackQuery):
+    await query.message.delete()
+    await query.message.answer("Вы в главном меню.", reply_markup=kb.customer_role_menu)

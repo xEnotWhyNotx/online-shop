@@ -15,6 +15,7 @@ admin_role_button = [
      [InlineKeyboardButton(text="Получить список всех заказов", callback_data="get_all_orders")],
      [InlineKeyboardButton(text="Поиск по названию", callback_data="search_by_name")],
      [InlineKeyboardButton(text="Создать промокод", callback_data="create_promocode")],
+     [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="request_role_change_to_seller")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
      ]
 
@@ -36,7 +37,8 @@ customer_role_button = [
      [InlineKeyboardButton(text="Все товары", callback_data = "show_all_items")],
      [InlineKeyboardButton(text="Найти товар через конфигуратор", callback_data = "plug")],
      [InlineKeyboardButton(text="Ввести промокод", callback_data="enter_promocode")],
-     [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="switch_user_role_to_seller")],
+     [InlineKeyboardButton(text="Сменить роль на продавца", callback_data="request_role_change_to_seller")],
+     #[InlineKeyboardButton(text="Сменить роль на продавца", callback_data="switch_user_role_to_seller")],
      [InlineKeyboardButton(text="Отобразить мои заказы", callback_data= "get_this_customer_orders")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
                ]
@@ -51,19 +53,13 @@ select_discount_button = [
     [InlineKeyboardButton(text=f"25%", callback_data=f"discount_25")],
     [InlineKeyboardButton(text="Назад", callback_data="go_back")]
 ]
+back_button = [
+    [InlineKeyboardButton(text="Назад", callback_data="go_back_customer")]
+]
 
 seller_dicount_menu = InlineKeyboardMarkup(inline_keyboard=select_discount_button)
-# def discount_buttons():
-#     # Создаем кнопки с процентами скидки
-#     discount_rates = [5, 10, 15, 20, 50]
-#     discount_buttons = [
-#         InlineKeyboardButton(text=f"{rate}%", callback_data=f"discount_{rate}")
-#         for rate in discount_rates
-#     ]
-#     keyboard = InlineKeyboardMarkup(inline_keyboard=discount_buttons, row_width=5)  # Устанавливаем row_width, чтобы управлять количеством кнопок в строке
-# #     # Добавляем кнопки скидки в первую строку
-# #     keyboard.add(*discount_buttons)
-#     # Добавляем кнопку "Назад" во вторую строку
-#     keyboard.add(InlineKeyboardButton(text="Назад", callback_data="go_back"))
-#     print('СОЗДАЛИ КЛАВУ', keyboard)
-#     return keyboard
+
+back_button_menu = InlineKeyboardMarkup(inline_keyboard=back_button)
+
+back_button1 = InlineKeyboardButton(text="Назад", callback_data="go_back_latest")
+back_to_menu = InlineKeyboardMarkup(inline_keyboard=[[back_button1]])

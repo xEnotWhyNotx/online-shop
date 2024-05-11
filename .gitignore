@@ -12,3 +12,5 @@ config.py
 online-shop_V2_1.db
 order_list*
 docker-compose.yml
+.env
+users_list.csv

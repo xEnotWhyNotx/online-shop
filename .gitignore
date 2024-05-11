@@ -6,4 +6,5 @@ __pycache__/
 *.db
 *.sqlite3
 token1.py
+config.py
 online-shop_V2_1.db

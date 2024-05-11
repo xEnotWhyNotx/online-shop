@@ -101,12 +101,16 @@ async def create_item(query:types.CallbackQuery, state:FSMContext):
     new_id = bot_db.create_new_item()
     await query.message.answer(text="Пожалуйста, укажите название для нового товара.")
     await state.set_state(user_states.waiting_for_name)  # Переводим стейт в ожидание названия
-    
+
+@rt.callback_query(F.data == "search_by_name")
+async def prompt_search(query: types.CallbackQuery, state: FSMContext):  # Make sure FSMContext is passed here
+    await query.message.answer("Введите название товара, который вы хотите найти:", reply_markup=types.ReplyKeyboardRemove())
+    await state.set_state(user_states.waiting_for_product_search)  # Correctly set state 
 
 @rt.message(user_states.waiting_for_name)
 async def add_name(message: Message, state: FSMContext):
     #Очищаем полученную строку от спец.символов, двойные пробелы заменяем на одинарные
-    pattern = "([А-Яа-яA-Za-z]+(?:\s[А-Яа-яA-Za-z0-9]+)*)"
+    pattern = r"([А-Яа-яA-Za-z]+(?:\s[А-Яа-яA-Za-z0-9]+)*)"
     match = re.search(pattern,message.text)
     if match:
         cleaned_string = re.sub(r'[^a-zA-ZА-Яа-я0-9 ]+', '', message.text).strip()
@@ -126,9 +130,24 @@ async def add_description(message: Message, state: FSMContext):
     await message.answer(text=f"Теперь укажите цену товара.")
     await state.set_state(user_states.waiting_for_price)
 
+@rt.message(user_states.waiting_for_product_search)
+async def search_product(message: Message, state: FSMContext):
+    product_name = message.text
+    product = bot_db.get_product_by_name(product_name)
+    if product:
+        # Assuming 'product' is a tuple with (id, name, description, price, amount, picture)
+        response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
+        if product[5]:  # if there's a picture
+            await message.answer_photo(photo=product[5], caption=response)
+        else:
+            await message.answer(response)
+    else:
+        await message.answer("Товар не найден.")
+    await state.clear()
+
 @rt.message(user_states.waiting_for_price)
 async def add_price(message: Message, state: FSMContext):
-    pattern = "^\d+$"
+    pattern = r"^\d+$"
 
     if re.match(pattern, message.text):
         bot_db.insert_price(message.text)
@@ -139,7 +158,7 @@ async def add_price(message: Message, state: FSMContext):
 
 @rt.message(user_states.waiting_for_amount)
 async def add_amount(message: Message, state: FSMContext):
-    pattern = "^\d+$"
+    pattern = r"^\d+$"
     if re.match(pattern, message.text):
 
         bot_db.insert_amount(message.text)
@@ -241,7 +260,7 @@ async def show_all_items(query: types.CallbackQuery, state:FSMContext):
                 f"{'<b>'}Цена в рублях:{'</b>'} {Price}\n"
                 f"{'<b>'}В наличии:{'</b>'} {Amount}\n"
             )
-            await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
+            # await query.message.answer_photo(photo=picture, caption = Card, parse_mode="HTML")
             await query.answer()
     await query.message.answer("Пожалуйста, введите артикул товара, который вы хотите добавить в корзину.")
     await state.set_state(user_states.waiting_for_item_pick)

@@ -185,3 +185,7 @@ class BotDB:
             self.conn.commit()
         else:
             raise WrongItemException
+        
+    def get_product_by_name(self, name):
+        self.cursor.execute("SELECT * FROM Items WHERE Name LIKE ?", (name,))
+        return self.cursor.fetchone()

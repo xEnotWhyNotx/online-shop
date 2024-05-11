@@ -11,6 +11,12 @@ from aiogram import types
 #     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 # ]
 
+def search_by_name_menu():
+    markup = InlineKeyboardMarkup()
+    button = InlineKeyboardButton(text="Поиск по названию", callback_data="search_by_name")
+    markup.add(button)
+    return markup
+
 
 
 select_role_button = [[
@@ -23,6 +29,7 @@ select_role_menu = InlineKeyboardMarkup(inline_keyboard = select_role_button)
 admin_role_button = [
      [InlineKeyboardButton(text="Получить список всех пользователей", callback_data="get_users")],
      [InlineKeyboardButton(text="Получить список всех заказов", callback_data="get_all_orders")],
+     [InlineKeyboardButton(text="Поиск по названию", callback_data="search_by_name")],
      [InlineKeyboardButton(text="Получить гайд", url="https://t.me/GigaShopGuide")]
      ]
 
@@ -39,6 +46,7 @@ seller_role_button = [
 seller_role_menu = InlineKeyboardMarkup(inline_keyboard=seller_role_button)
 
 customer_role_button = [
+     [InlineKeyboardButton(text="Поиск по названию", callback_data="search_by_name")],
      [InlineKeyboardButton(text= "Все товары", callback_data = "show_all_items")],
      [InlineKeyboardButton(text="Указать интересующий товар вручную", callback_data = "plug")],
      [InlineKeyboardButton(text="Найти товар через конфигуратор", callback_data = "plug")],

@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 #Закоменитровал, так как у меня нет handlers, только Nikita_handlers
 #from handlers import router 
 from Nikita_handlers import rt
-from token1 import token
+from config import token
 
 
 async def main():

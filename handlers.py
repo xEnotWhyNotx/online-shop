@@ -143,7 +143,7 @@ async def add_description(message: Message, state: FSMContext):
 async def search_product(message: Message, state: FSMContext):
     product_name = message.text
     products = bot_db.get_product_by_name(product_name)
-    print(products)
+    # print(products)
     for product in products:
         if product:
             response = f"Наименование: {product[1]}\nОписание: {product[2]}\nЦена: {product[3]} руб.\nКоличество: {product[4]}"
